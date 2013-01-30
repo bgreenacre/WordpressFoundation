@@ -1,4 +1,11 @@
-<?php namespace Seeder;
+<?php namespace Kummerspeck\Wordpress;
+/**
+ * Kummerspeck Wordpress Utilities
+ *
+ * @package Kummerspeck/WordpressFoundation
+ * @author Brian Greenacre <bgreenacre42@gmail.com>
+ * @version $id$
+ */
 
 class ViewManager {
 
