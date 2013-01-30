@@ -1,0 +1,21 @@
+{
+	"name": "kummerspeck/wordpress-foundation",
+	"description": "A collection of classes to help development of wordpress plugins.",
+	"keywords": ["wordpress", "library"],
+    "authors": [
+        {
+            "name": "Brian Greenacre",
+            "email": "bgreenacre42@gmail.com",
+            "role": "Developer"
+        }
+    ],
+    "autoload": {
+        "psr-0": {"Kummerspeck\\Wordpress": "src/"},
+        "files": ["src/functions/Arr.php"]
+    },
+    "require": {
+    	"php": ">=5.3.3",
+        "symfony/yaml": "2.2.*@dev",
+        "pimple/pimple": "dev-master"
+    }
+}
