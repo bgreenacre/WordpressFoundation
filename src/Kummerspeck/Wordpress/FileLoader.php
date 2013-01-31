@@ -28,7 +28,7 @@ class FileLoader {
     protected $_paths = array();
 
     /**
-     * Constuct object.
+     * Construct object.
      *
      * @access public
      * @param array $paths Array of paths to load files from.
