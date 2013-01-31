@@ -51,12 +51,12 @@ class Config implements \ArrayAccess {
     protected $_namespace;
 
     /**
-     * Path to where config files exist.
+     * FileLoader object.
      *
      * @access protected
-     * @var string
+     * @var FileLoader
      */
-    protected $_path;
+    protected $_loader;
 
     /**
      * Tracks which top-level config/option values have been
@@ -72,14 +72,14 @@ class Config implements \ArrayAccess {
      * optionally arguments.
      *
      * @access public
-     * @param string $path Path to where config files are.
+     * @param object $path      File loader object.
      * @param string $namespace Option namespace.
      * @param string $delimiter Delimiter character for array access.
      * @return void
      */
-    public function __construct($path, $namespace = null, $delimiter = null)
+    public function __construct(FileLoader $loader, $namespace = null, $delimiter = null)
     {
-        $this->setFilePath($path);
+        $this->setFileLoader($path);
 
         if ($delimiter !== null)
         {
@@ -289,7 +289,7 @@ class Config implements \ArrayAccess {
      */
     private function _loadFile($file, $extension)
     {
-        return include $file . '.' . $extension;
+        return $this->_loader->load($file, $extension);
     }
 
     /**
@@ -377,42 +377,25 @@ class Config implements \ArrayAccess {
      * Set file path where config files are located.
      *
      * @access public
-     * @param string $path
+     * @param  FileLoader
      * @return $this
-     * @throws InvalidArgumentException If invalid path is given.
      */
-    public function setFilePath($path)
+    public function setFileLoader(FileLoader $loader)
     {
-        // Validate the path by resolving it.
-        $resolvedPath = realpath($path);
-
-        // Throw exception if it's not a valid
-        // path on the system.
-        if ( ! $path)
-        {
-            throw new \InvalidArgumentException(
-                sprintf(
-                    'Config path "%s" does not exist',
-                    $path
-                )
-            );
-        }
-
-        // Append a directory separator and set the property.
-        $this->_path = $resolvedPath . DIRECTORY_SEPARATOR;
+        $this->_loader = $loader;
 
         return $this;
     }
 
     /**
-     * Get the file path.
+     * Get the file loader.
      *
      * @access public
-     * @return string File path.
+     * @return FileLoader.
      */
-    public function getFilePath()
+    public function getFileLoader()
     {
-        return $this->_path;
+        return $this->_loader;
     }
 
     /**
