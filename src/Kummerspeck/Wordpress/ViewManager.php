@@ -19,7 +19,7 @@ class ViewManager {
     /**
      * Plugin container object.
      *
-     * @access public
+     * @access protected
      * @var PluginContainer
      */
     protected $_container;

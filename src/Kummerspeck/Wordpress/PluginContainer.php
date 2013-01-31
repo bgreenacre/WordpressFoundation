@@ -65,6 +65,11 @@ class PluginContainer extends Pimple {
             );
         });
 
+        $this['hooks'] = $this->share(function($c)
+        {
+            return new Hooks();
+        });
+
         return $this;
     }
 
@@ -76,6 +81,7 @@ class PluginContainer extends Pimple {
      */
     public function run()
     {
+        $this['hooks']->load();
     }
 
 }
