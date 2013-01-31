@@ -18,7 +18,6 @@ use Kummerspeck\Arr\get_path;
  * is useful when setting default values in an options form.'
  *
  * @package Kummerspeck/WordpressFoundation
- * @subpackage Utility/Config
  * @author Brian Greenacre <bgreenacre42@gmail.com>
  * @version $id$
  */
@@ -286,7 +285,7 @@ class Config implements \ArrayAccess {
      * @access private
      * @param  string $file      Complete path to the file name.
      * @param  string $extension File extension.
-     * @return array  The file should return an array of associative data.
+     * @return array             The file should return an associative array.
      */
     private function _loadFile($file, $extension)
     {
@@ -462,7 +461,14 @@ class Config implements \ArrayAccess {
      */
     public function offsetExists($key)
     {
-        return (get_path($key, $this->_path, null, $this->getDelimiter()) !== null);
+        return (
+            get_path(
+                $key,
+                $this->_path,
+                null,
+                $this->getDelimiter()
+            ) !== null
+        );
     }
 
 }

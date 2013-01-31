@@ -9,21 +9,36 @@
 
 use Pimple;
 
+/**
+ * Plugin container.
+ *
+ * @package Kummerspeck/WordpressFoundation
+ * @author Brian Greenacre <bgreenacre42@gmail.com>
+ * @version $id$
+ */
 class PluginContainer extends Pimple {
 
+    /**
+     * Bootstrap the plugin by loading/setting
+     * default container dependencys.
+     *
+     * @access public
+     * @return $this
+     */
     public function bootstrap()
     {
+        // Add the plugin file loader.
         $this['fileloader'] = $this->share(function($c)
         {
             return new FileLoader(
                 array(
                     'config'    => $c['paths.config'],
                     'resources' => $c['paths.resources'],
-                    'seeds'     => $c['paths.seeds'],
                     )
             );
         });
 
+        // Add the input class that handles GLOBAL inputs.
         $this['input'] = $this->share(function($c)
         {
             return new Input(
@@ -35,11 +50,13 @@ class PluginContainer extends Pimple {
             );
         });
 
+        // Add the view manager.
         $this['view'] = $this->share(function($c)
         {
             return new ViewManager($c);
         });
 
+        // Add the config/options loader.
         $this['config'] = $this->share(function($c)
         {
             return new Config(
@@ -51,10 +68,14 @@ class PluginContainer extends Pimple {
         return $this;
     }
 
+    /**
+     * Run the plugin.
+     *
+     * @access public
+     * @return void
+     */
     public function run()
     {
-        $this['installer']->run();
-        $this['section.admin']->run();
     }
 
 }

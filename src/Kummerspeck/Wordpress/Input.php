@@ -16,7 +16,6 @@ use Kummerspeck\Arr\get_key;
  * Input class handles any global inputs from the request.
  * 
  * @package Kummerspeck/WordpressFoundation
- * @subpackage Utility/Config
  * @author Brian Greenacre <bgreenacre42@gmail.com>
  * @version $id$
  */
