@@ -7,9 +7,6 @@
  * @version $id$
  */
 
-use Kummerspeck\Arr\set_path;
-use Kummerspeck\Arr\unset_path;
-use Kummerspeck\Arr\get_path;
 use Kummerspeck\Arr\get_key;
 
 /**
