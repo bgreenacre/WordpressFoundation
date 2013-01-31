@@ -67,7 +67,7 @@ class PluginContainer extends Pimple {
 
         $this['hooks'] = $this->share(function($c)
         {
-            return new Hooks();
+            return new Hooks($c);
         });
 
         return $this;
