@@ -41,8 +41,10 @@ class Hooks {
 	 * @param integer $defaultPriority Default priority to set on hook.
 	 * @return void
 	 */
-	public function __construct($defaultPriority = null)
+	public function __construct(PluginContainer $container, $defaultPriority = null)
 	{
+		$this->setContainer($container);
+
 		if ($defaultPriority !== null)
 		{
 			// Set default priority
