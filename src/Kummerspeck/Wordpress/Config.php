@@ -68,6 +68,14 @@ class Config implements \ArrayAccess {
     protected $_loaded = array();
 
     /**
+     * The file extension the config files are using.
+     *
+     * @access protected
+     * @var string
+     */
+    protected $_extension = 'yml';
+
+    /**
      * Initial the object with the path to config files and
      * optionally arguments.
      *
@@ -225,10 +233,13 @@ class Config implements \ArrayAccess {
         $namespace = rtrim($this->getNamespace(), $this->getDelimiter());
         $filePath  = $this->getFilePath();
 
-        if ( ! $path && is_file($filePath . $namespace . '.php'))
+        if ( ! $path && is_file($filePath . $namespace . '.' . $this->_extension))
         {
             // Set data array with the namespace config file name
-            $this->_data = $this->_loadFile($filePath . $namespace . $path, 'php');
+            $this->_data = $this->_loadFile(
+                $filePath . $namespace . $path,
+                $this->_extension
+            );
         }
         elseif (is_dir($filePath . $namespace . $path))
         {
@@ -254,10 +265,14 @@ class Config implements \ArrayAccess {
 
                     $this->loadNamespace($path . $filename . DIRECTORY_SEPARATOR);
                 }
-                elseif ($file->getExtension() === 'php')
+                elseif ($file->getExtension() === $this->_extension)
                 {
-                    // Found a php config file so load it's contents
-                    $data    = $this->_loadFile($filePath . $namespace . $path . $filename, 'php');
+                    // Found a config file so load it's contents
+                    $data    = $this->_loadFile(
+                        $filePath . $namespace . $path . $filename,
+                        $this->_extension
+                    );
+                    
                     $pathKey = $this->getNamespace();
 
                     if ($path)
@@ -371,6 +386,31 @@ class Config implements \ArrayAccess {
     public function getDelimiter()
     {
         return $this->_delimiter;
+    }
+
+    /**
+     * Set the file extension.
+     *
+     * @access public
+     * @param string $extension The file extension.
+     * @return $this
+     */
+    public function setFileExtension($extension)
+    {
+        $this->_extension = $extension;
+
+        return $this;
+    }
+
+    /**
+     * Get the file extension.
+     *
+     * @access public
+     * @return string File extension.
+     */
+    public function getFileExtension()
+    {
+        return $this->_extension;
     }
 
     /**

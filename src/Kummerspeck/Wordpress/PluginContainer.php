@@ -81,7 +81,6 @@ class PluginContainer extends Pimple {
      */
     public function run()
     {
-        $this['hooks']->load();
     }
 
 }
