@@ -11,6 +11,14 @@ class Response {
     protected $_container;
 
     /**
+     * HTTP status code
+     *
+     * @access protected
+     * @var integer
+     */
+    protected $_status = 200;
+
+    /**
      * Construct object.
      *
      * @access public
@@ -44,6 +52,7 @@ class Response {
     	if ( ! headers_sent())
     	{
     		header('Content-Length: ' . strlen($this->_body));
+    		header('Status: ' . $this->getStatus());
 
     		foreach ($this->_headers as $header)
     		{
@@ -66,6 +75,29 @@ class Response {
     	$this->_headers[] = $header;
 
     	return $this;
+    }
+
+    public function setStatus($status)
+    {
+    	if ( ! is_numeric($status))
+    	{
+    		throw new \InvalidArgumentException('Status code must be a number.');
+    	}
+
+    	$this->_status = (int) $status;
+
+    	return $this;
+    }
+
+    /**
+     * Get the status code of the response object.
+     *
+     * @access public
+     * @return integer HTTP status code.
+     */
+    public function getStatus()
+    {
+    	return $this->_status;
     }
 
     /**
