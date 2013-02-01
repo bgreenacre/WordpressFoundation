@@ -110,6 +110,35 @@ class Hooks {
 		}, $priority, $argCount);
 	}
 
+	public function activateHook(Closure $closure)
+	{
+		$c = $this->getContainer();
+
+		register_activation_hook($c['plugin.filename'], function() use ($c, $closure)
+		{
+			$args = func_get_args();
+			array_unshift($args, $c);
+
+			return call_user_func_array($closure, $args);
+		});
+
+		return $this;
+	}
+
+	public function deactivateHook(Closure $closure)
+	{
+		$c = $this->getContainer();
+		register_activation_hook($c['plugin.filename'], function() use ($c, $closure)
+		{
+			$args = func_get_args();
+			array_unshift($args, $c);
+
+			return call_user_func_array($closure, $args);
+		});
+
+		return $this;
+	}
+
 	/**
 	 * Set the default priority level.
 	 *
