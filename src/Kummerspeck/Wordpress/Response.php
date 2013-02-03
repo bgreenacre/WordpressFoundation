@@ -77,6 +77,14 @@ class Response {
     	return $this;
     }
 
+    /**
+     * Set the status code.
+     *
+     * @access public
+     * @param integer $status Valid http status code.
+     * @return $this
+     * @throws InvalidArgumentException If status is not a number or invalid http code.
+     */
     public function setStatus($status)
     {
     	if ( ! is_numeric($status))
