@@ -149,7 +149,7 @@ class Config implements \ArrayAccess {
 
         // If there's a config file path set then
         // let's try and load values from it.
-        if ($filePath = $this->getFilePath())
+        if ($filePath = $this->getFilePath() && ! $this->loaded($parts[0]))
         {
             $pathParts = $parts;
             $path = '';
@@ -193,17 +193,21 @@ class Config implements \ArrayAccess {
         // to the top-level path parts.
         $optionValue = get_option($this->getNamespace() . $parts[0]);
 
-        if ($optionValue)
+        if ($optionValue !== false)
         {
             // Overwrite any config file values with the value
             // loaded from the options api.
             $this[$parts[0]] = unserialize($optionValue);
+            
+            // Track the loaded values.
+            $this->_loaded[] = $this->getNamespace() . $parts[0];
+
+            return $this;
         }
-
-        // Track the loaded values.
-        $this->_loaded[] = $this->getNamespace() . $parts[0];
-
-        return $this;
+        else
+        {
+            return get_option($parts[0]);
+        }
     }
 
     /**
@@ -460,7 +464,17 @@ class Config implements \ArrayAccess {
      */
     public function offsetGet($key)
     {
-        return get_path($key, $this->_path, null, $this->getDelimiter());
+        if ( ! $this->loaded($key))
+        {
+            $option = $this->load($key);
+
+            if ( ! is_object($option))
+            {
+                return $option;
+            }
+        }
+        
+        return get_path($key, $this->_data, null, $this->getDelimiter());
     }
 
     /**
