@@ -61,7 +61,7 @@ class Hooks {
 	 * @param integer              $priority Priority level of added action.
 	 * @param integer              $argCount Argument count added action should take.
 	 */
-	public function addAction($action, $callback, $priority = null, $argCount = null)
+	public function addAction($action, $callback, $priority = null, $argCount = 1)
 	{
 		$c = $this->getContainer();
 
@@ -90,7 +90,7 @@ class Hooks {
 	 * @param integer              $priority Priority level of added filter.
 	 * @param integer              $argCount Argument count added filter should take.
 	 */
-	public function addFilter($filter, $callback, $priority = null, $argCount = null)
+	public function addFilter($filter, $callback, $priority = null, $argCount = 1)
 	{
 		$c = $this->getContainer();
 
@@ -110,7 +110,7 @@ class Hooks {
 		}, $priority, $argCount);
 	}
 
-	public function activateHook(Closure $closure)
+	public function activateHook(\Closure $closure)
 	{
 		$c = $this->getContainer();
 
@@ -125,7 +125,7 @@ class Hooks {
 		return $this;
 	}
 
-	public function deactivateHook(Closure $closure)
+	public function deactivateHook(\Closure $closure)
 	{
 		$c = $this->getContainer();
 		register_activation_hook($c['plugin.filename'], function() use ($c, $closure)
