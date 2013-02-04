@@ -468,12 +468,14 @@ class Config implements \ArrayAccess {
         {
             $option = $this->load($key);
 
-            if ( ! is_object($option))
+            if ($option !== $this)
             {
+                // If returned value isn't an object then
+                // a global wordpress option is called.
                 return $option;
             }
         }
-        
+
         return get_path($key, $this->_data, null, $this->getDelimiter());
     }
 
