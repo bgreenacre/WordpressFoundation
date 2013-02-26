@@ -70,11 +70,6 @@ class ThemeContainer extends Pimple {
             return new Hooks($c);
         });
 
-        $this['response'] = function($c)
-        {
-            return new Response($c);
-        };
-
         return $this;
     }
 
