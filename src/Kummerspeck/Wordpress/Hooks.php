@@ -7,7 +7,7 @@
  * @version $id$
  */
 
-use Kummerspeck\Arr\get_key;
+use Pimple;
 
 /**
  * Manage hooks added by plugin.
@@ -22,7 +22,7 @@ class Hooks {
      * Plugin container object.
      *
      * @access protected
-     * @var PluginContainer
+     * @var Pimple
      */
 	protected $_container;
 
@@ -41,7 +41,7 @@ class Hooks {
 	 * @param integer $defaultPriority Default priority to set on hook.
 	 * @return void
 	 */
-	public function __construct(PluginContainer $container, $defaultPriority = null)
+	public function __construct(Pimple $container, $defaultPriority = null)
 	{
 		$this->setContainer($container);
 
@@ -174,10 +174,10 @@ class Hooks {
      * Set container object.
      *
      * @access public
-     * @param PluginContainer $container Plugin container object.
+     * @param Pimple $container Plugin container object.
      * @return $this
      */
-    public function setContainer(PluginContainer $container)
+    public function setContainer(Pimple $container)
     {
         $this->_container = $container;
 
@@ -188,7 +188,7 @@ class Hooks {
      * Get container object.
      *
      * @access public
-     * @return PluginContainer
+     * @return Pimple
      */
     public function getContainer()
     {

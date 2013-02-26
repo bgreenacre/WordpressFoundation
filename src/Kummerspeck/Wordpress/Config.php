@@ -7,10 +7,6 @@
  * @version $id$
  */
 
-use Kummerspeck\Arr\set_path;
-use Kummerspeck\Arr\unset_path;
-use Kummerspeck\Arr\get_path;
-
 /**
  * Config class handles all interactions between loading and saving options
  * to the [wordpress options api](https://codex.wordpress.org/Options_API).
@@ -73,21 +69,21 @@ class Config implements \ArrayAccess {
      * @access protected
      * @var string
      */
-    protected $_extension = 'yml';
+    protected $_extension = 'php';
 
     /**
      * Initial the object with the path to config files and
      * optionally arguments.
      *
      * @access public
-     * @param object $path      File loader object.
+     * @param object $loader    File loader object.
      * @param string $namespace Option namespace.
      * @param string $delimiter Delimiter character for array access.
      * @return void
      */
     public function __construct(FileLoader $loader, $namespace = null, $delimiter = null)
     {
-        $this->setFileLoader($path);
+        $this->setFileLoader($loader);
 
         if ($delimiter !== null)
         {
@@ -110,7 +106,7 @@ class Config implements \ArrayAccess {
      */
     public function __destruct()
     {
-        $this->save();
+        //$this->save();
     }
 
     /**
@@ -149,7 +145,7 @@ class Config implements \ArrayAccess {
 
         // If there's a config file path set then
         // let's try and load values from it.
-        if ($filePath = $this->getFilePath() && ! $this->loaded($parts[0]))
+        if (($filePath = $this->getFileLoader()->getPaths('config')) && ! $this->loaded($parts[0]))
         {
             $pathParts = $parts;
             $path = '';
@@ -157,7 +153,7 @@ class Config implements \ArrayAccess {
             // Loop through the parts until a file is found
             while ($part = array_shift($pathParts))
             {
-                if (is_file($filePath . $path . $part))
+                if (is_file($filePath . $path . $part . '.' . $this->_extension))
                 {
                     // Replace directory characters with the
                     // delimiter character for proper setting
@@ -175,7 +171,7 @@ class Config implements \ArrayAccess {
                     // array index path.
                     $this[$pathKey] = $this->_loadFile(
                         $filePath . $path . $part,
-                        'php'
+                        $this->_extension
                     );
                 }
                 elseif (is_dir($filePath . $path . $part))
@@ -204,9 +200,13 @@ class Config implements \ArrayAccess {
 
             return $this;
         }
-        else
+        elseif ( ! $this->getNamespace())
         {
             return get_option($parts[0]);
+        }
+        else
+        {
+            return $this;
         }
     }
 
@@ -235,7 +235,7 @@ class Config implements \ArrayAccess {
     public function loadNamespace($path = '')
     {
         $namespace = rtrim($this->getNamespace(), $this->getDelimiter());
-        $filePath  = $this->getFilePath();
+        $filePath  = $this->getFileLoader()->getPaths('config');
 
         if ( ! $path && is_file($filePath . $namespace . '.' . $this->_extension))
         {
@@ -452,7 +452,7 @@ class Config implements \ArrayAccess {
      */
     public function offsetSet($key, $value)
     {
-        set_path($this->_data, $key, $value, $this->getDelimiter());
+        \Kummerspeck\Arr\set_path($this->_data, $key, $value, $this->getDelimiter());
     }
 
     /**
@@ -476,7 +476,7 @@ class Config implements \ArrayAccess {
             }
         }
 
-        return get_path($key, $this->_data, null, $this->getDelimiter());
+        return \Kummerspeck\Arr\get_path($key, $this->_data, null, $this->getDelimiter());
     }
 
     /**
@@ -488,7 +488,7 @@ class Config implements \ArrayAccess {
      */
     public function offsetUnset($key)
     {
-        unset_path($this->_data, $key, $this->getDelimiter());
+        \Kummerspeck\Arr\unset_path($this->_data, $key, $this->getDelimiter());
     }
 
     /**
@@ -501,7 +501,7 @@ class Config implements \ArrayAccess {
     public function offsetExists($key)
     {
         return (
-            get_path(
+            \Kummerspeck\Arr\get_path(
                 $key,
                 $this->_path,
                 null,

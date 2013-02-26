@@ -8,7 +8,6 @@
  */
 
 use Symfony\Component\Yaml\Yaml;
-use Kummerspeck\Arr\get_key;
 
 /**
  * Loads file contents.
@@ -192,7 +191,7 @@ class FileLoader {
     {
         if ($which !== null)
         {
-            return get_key($which, $this->_paths);
+            return \Kummerspeck\Arr\get_key($which, $this->_paths);
         }
 
         return $this->_paths;
