@@ -69,7 +69,16 @@ class Config implements \ArrayAccess {
      * @access protected
      * @var string
      */
-    protected $_extension = 'php';
+    protected $_extension = 'yml';
+
+    /**
+     * Tracks the key that was loaded by the load
+     * method.
+     *
+     * @access protected
+     * @var string
+     */
+    protected $_lastKeyLoaded;
 
     /**
      * Initial the object with the path to config files and
@@ -134,6 +143,9 @@ class Config implements \ArrayAccess {
      */
     public function load($key)
     {
+        // Track this key was loaded last
+        $this->_lastKeyLoaded = $key;
+
         // Don't reload the value if it's been loaded before.
         if ($this->loaded($key))
         {
@@ -148,7 +160,7 @@ class Config implements \ArrayAccess {
         if (($filePath = $this->getFileLoader()->getPaths('config')) && ! $this->loaded($parts[0]))
         {
             $pathParts = $parts;
-            $path = '';
+            $path      = '';
 
             // Loop through the parts until a file is found
             while ($part = array_shift($pathParts))
@@ -440,6 +452,24 @@ class Config implements \ArrayAccess {
     public function getFileLoader()
     {
         return $this->_loader;
+    }
+
+    /**
+     * Return the entire data or a key.
+     *
+     * @access public
+     * @return array  Array contents
+     */
+    public function asArray($key = null)
+    {
+        if ($key === null)
+        {
+            $key = $this->_lastKeyLoaded;
+        }
+
+        return ($key === true)
+            ? (array) $this->_data
+            : (array) $this[$key];
     }
 
     /**

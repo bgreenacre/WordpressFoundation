@@ -105,7 +105,7 @@ class FileLoader {
         switch (ltrim($extension, '.'))
         {
             case 'yml':
-                return Yaml::parser($file . $extension);
+                return Yaml::parse($file . $extension);
 
                 break;
             case 'xml':
