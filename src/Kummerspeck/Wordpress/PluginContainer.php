@@ -75,9 +75,14 @@ class PluginContainer extends Pimple {
             return new Response($c);
         };
 
+        $this['menus'] = $this->share(function($c)
+        {
+            return new Menus($c, $c['config']->load('menus')->asArray());
+        });
+
         $this['post.types'] = $this->share(function($c)
         {
-            return new PostTypes($c['config']->load('post.types')->asArray());
+            return new PostTypes($c, $c['config']->load('post.types')->asArray());
         });
 
         return $this;
@@ -105,6 +110,11 @@ class PluginContainer extends Pimple {
         {
             $c['post.types']->register();
         }, 2);
+
+        $this['hooks']->addAction('admin_menu', function($c)
+        {
+            $c['menus']->register();
+        });
     }
 
 }
