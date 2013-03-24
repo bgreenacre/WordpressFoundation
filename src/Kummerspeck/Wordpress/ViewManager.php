@@ -41,7 +41,7 @@ class ViewManager {
      *
      * @access public
      * @param  string $view filename of view
-     * @param  [type] $data Associative array of data to pass to view file.
+     * @param  array  $data Associative array of data to pass to view file.
      * @return string       Rendered view.
      */
     public function make($view, array $data = null)
@@ -59,7 +59,7 @@ class ViewManager {
         try
         {
             // Use FileLoader to get rendered view.
-            $c['fileloader']->load($c['paths.views'] . $view, '.php');
+            $c['fileloader']->load($c['paths.views'] . $view, 'php');
         }
         catch (\Exception $e)
         {

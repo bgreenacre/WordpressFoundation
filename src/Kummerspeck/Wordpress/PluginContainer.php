@@ -31,6 +31,7 @@ class PluginContainer extends Pimple {
         $this['fileloader'] = $this->share(function($c)
         {
             return new FileLoader(
+                $c,
                 array(
                     'config'    => $c['paths.config'],
                     'resources' => $c['paths.resources'],
