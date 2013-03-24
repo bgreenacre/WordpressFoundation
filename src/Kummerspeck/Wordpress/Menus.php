@@ -60,23 +60,14 @@ class Menus {
 
                 $callback = function() use ($controller, $c)
                 {
-                    if ($sep = strpos('::', $controller))
-                    {
-                        $action = substr($controller, $sep+2);
-                        $controller = substr($controller, 0, $sep);
-                    }
-                    else
-                    {
-                        $action = 'indexAction';
-                    }
-
-                    $controllerObject = new $controller($c);
-
-                    return (string) $controllerObject->$action();
+                    echo $c['controller.resolver']($controller);
                 };
             }
+            else
+            {
+                $callback = null;
+            }
 
-            var_dump($callback());
             switch(Arr\get_key('type', $menu))
             {
                 case 'submenu':
@@ -84,8 +75,8 @@ class Menus {
                         Arr\get_key('parent', $menu),
                         Arr\get_key('page_title', $menu),
                         Arr\get_key('menu_title', $menu),
-                        Arr\get_key('capability', $menu, 'manage_sites'),
-                        Arr\get_key('menu_slug', $menu),
+                        Arr\get_key('capability', $menu, 'activate_plugins'),
+                        Arr\get_key('menu_slug', $menu, null),
                         $callback
                     );
 
@@ -95,7 +86,7 @@ class Menus {
                     add_menu_page(
                         Arr\get_key('page_title', $menu),
                         Arr\get_key('menu_title', $menu),
-                        Arr\get_key('capability', $menu, 'manage_sites'),
+                        Arr\get_key('capability', $menu, 'activate_plugins'),
                         Arr\get_key('menu_slug', $menu),
                         $callback,
                         Arr\get_key('icon_url', $menu),
