@@ -18,6 +18,12 @@ use Kummerspeck\Arr as Arr;
  */
 class Menus {
 
+    /**
+     * Array of menus to add in wordpress.
+     *
+     * @var array
+     * @access protected
+     */
     protected $_menus = array();
 
     /**
@@ -28,6 +34,14 @@ class Menus {
      */
     protected $_container;
 
+    /**
+     * Initialize and add an array of menus.
+     *
+     * @access public
+     * @param Pimple $container Container object.
+     * @param array  $menus     Array of menus.
+     * @return void
+     */
     public function __construct(Pimple $container, array $menus = null)
     {
         $this->setContainer($container);
@@ -41,6 +55,13 @@ class Menus {
         }
     }
 
+    /**
+     * Add a single menus definition array.
+     *
+     * @access public
+     * @param array $properties Menu definition array.
+     * @return void
+     */
     public function add(array $properties)
     {
         $this->_menus[] = $properties;
@@ -48,6 +69,13 @@ class Menus {
         return $this;
     }
 
+    /**
+     * Iterate through all the menus and register them
+     * in wordpress using appropriate function.
+     *
+     * @access public
+     * @return void
+     */
     public function register()
     {
         foreach ($this->_menus as $menu)
@@ -98,6 +126,13 @@ class Menus {
         }
     }
 
+    /**
+     * Set's menus properties of the object.
+     *
+     * @access public
+     * @param array $menus Array of menu definitions.
+     * @return $this
+     */
     public function setMenus(array $menus)
     {
         $this->_menus = $menus;
@@ -105,6 +140,12 @@ class Menus {
         return $this;
     }
 
+    /**
+     * Get menus property.
+     *
+     * @access public
+     * @return array Menus array.
+     */
     public function getMenus()
     {
         return $this->_menus;
