@@ -308,6 +308,8 @@ class Config implements \ArrayAccess {
                 }
             }
         }
+
+        return $this;
     }
 
     /**
