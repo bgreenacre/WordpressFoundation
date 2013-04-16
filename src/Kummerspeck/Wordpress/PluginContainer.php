@@ -86,25 +86,41 @@ class PluginContainer extends Pimple {
             return new PostTypes($c, $c['config']->load('post.types')->asArray());
         });
 
-        $this['controller.resolver'] = function($c)
+        $this['controller'] = $this->protect(function($controller) use ($c)
         {
-            return function($controller) use ($c)
+            if ($controller)
             {
-                if ($sep = strpos($controller, '::'))
-                {
-                    $action = substr($controller, $sep+2);
-                    $controller = substr($controller, 0, $sep);
-                }
-                else
-                {
-                    $action = 'indexAction';
-                }
+                $c = $this->_container;
 
-                $controllerObject = new $controller($c);
+                $callback = function() use ($controller, $c)
+                {
+                    echo $c['controller.resolver']($controller);
+                };
+            }
+            else
+            {
+                $callback = null;
+            }
 
-                return $controllerObject->$action();
-            };
-        };
+            return $callback;
+        });
+
+        $this['controller.resolver'] = $this->protect(function($controller) use ($c)
+        {
+            if ($sep = strpos($controller, '::'))
+            {
+                $action = substr($controller, $sep+2);
+                $controller = substr($controller, 0, $sep);
+            }
+            else
+            {
+                $action = 'indexAction';
+            }
+
+            $controllerObject = new $controller($c);
+
+            return $controllerObject->$action();
+        });
 
         return $this;
     }

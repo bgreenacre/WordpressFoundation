@@ -80,22 +80,6 @@ class Menus {
     {
         foreach ($this->_menus as $menu)
         {
-            $controller = Arr\get_key('controller', $menu);
-
-            if ($controller)
-            {
-                $c = $this->_container;
-
-                $callback = function() use ($controller, $c)
-                {
-                    echo $c['controller.resolver']($controller);
-                };
-            }
-            else
-            {
-                $callback = null;
-            }
-
             switch(Arr\get_key('type', $menu))
             {
                 case 'submenu':
@@ -105,7 +89,7 @@ class Menus {
                         Arr\get_key('menu_title', $menu),
                         Arr\get_key('capability', $menu, 'activate_plugins'),
                         Arr\get_key('menu_slug', $menu, null),
-                        $callback
+                        $this->_container['controller'](Arr\get_key('controller', $menu))
                     );
 
                     break;
@@ -116,7 +100,7 @@ class Menus {
                         Arr\get_key('menu_title', $menu),
                         Arr\get_key('capability', $menu, 'activate_plugins'),
                         Arr\get_key('menu_slug', $menu),
-                        $callback,
+                        $this->_container['controller'](Arr\get_key('controller', $menu)),
                         Arr\get_key('icon_url', $menu),
                         Arr\get_key('position', $menu)
                     );
