@@ -86,6 +86,11 @@ class PluginContainer extends Pimple {
             return new PostTypes($c, $c['config']->load('post.types')->asArray());
         });
 
+        $this['widgets'] = $this->share(function($c)
+        {
+            return new Widgets($c);
+        });
+
         $this['controller'] = $this->protect(function($controller) use ($c)
         {
             if ($controller)

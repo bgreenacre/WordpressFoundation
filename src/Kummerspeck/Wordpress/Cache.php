@@ -1,4 +1,4 @@
-<?php namespace Kummerspeck\Cache;
+<?php namespace Kummerspeck\Wordpress;
 /**
  * Kummerspeck Wordpress Utilities
  *
