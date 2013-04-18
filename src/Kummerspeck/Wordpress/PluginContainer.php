@@ -99,7 +99,7 @@ class PluginContainer extends Pimple {
 
                 $callback = function() use ($controller, $c)
                 {
-                    echo $c['controller.resolver']($controller);
+                    echo $c['controller.resolver']($controller, func_get_args());
                 };
             }
             else
@@ -110,21 +110,31 @@ class PluginContainer extends Pimple {
             return $callback;
         });
 
-        $this['controller.resolver'] = $this->protect(function($controller) use ($c)
+        $this['controller.resolver'] = $this->protect(function($controller, $args) use ($c)
         {
-            if ($sep = strpos($controller, '::'))
+            if (is_callable($controller, true))
             {
-                $action = substr($controller, $sep+2);
-                $controller = substr($controller, 0, $sep);
+                return call_user_func_array($controller, $args);
             }
             else
             {
-                $action = 'indexAction';
+                if ($sep = strpos($controller, '::'))
+                {
+                    $action = substr($controller, $sep+2);
+                    $controller = substr($controller, 0, $sep);
+                }
+                else
+                {
+                    $action = 'indexAction';
+                }
+
+                $controllerObject = new $controller($c);
+
+                return call_user_func_array(
+                    array($controllerObject, $action),
+                    $args
+                );
             }
-
-            $controllerObject = new $controller($c);
-
-            return $controllerObject->$action();
         });
 
         return $this;

@@ -111,9 +111,8 @@ class FileLoader {
 
                 throw new \Exception(
                     sprintf(
-                        'File "%s" does not exist in plugin "%s".',
-                        str_replace($c['paths.plugin'], '', $file) . $extension,
-                        $c['plugin.name']
+                        'File "%s" does not exist.',
+                        $file
                     )
                 );
             }
