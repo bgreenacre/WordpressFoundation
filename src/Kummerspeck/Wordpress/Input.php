@@ -7,7 +7,7 @@
  * @version $id$
  */
 
-use Kummerspeck\Arr\get_key;
+use Kummerspeck\Arr as Arr;
 
 /**
  * Input class handles any global inputs from the request.
@@ -43,6 +43,14 @@ class Input {
     protected $_cookies = array();
 
     /**
+     * $_FILES array
+     *
+     * @access protected
+     * @var array
+     */
+    protected $_files = array();
+
+    /**
      * Optionally set the data arrays on object instantiation.
      *
      * @access public
@@ -51,22 +59,28 @@ class Input {
      */
     public function __construct(array $data = array())
     {
-        if ($post = get_key('post', $data))
+        if ($post = Arr\get_key('post', $data))
         {
             // Set post array
             $this->setPost($post);
         }
 
-        if ($query = get_key('query', $data))
+        if ($query = Arr\get_key('query', $data))
         {
             // Set query array
             $this->setQuery($query);
         }
 
-        if ($cookies = get_key('cookies', $data))
+        if ($cookies = Arr\get_key('cookies', $data))
         {
             // Set cookie array
             $this->setCookies($cookies);
+        }
+
+        if ($files = Arr\get_key('files', $data))
+        {
+            // Set files array
+            $this->setFiles($files);
         }
     }
 
@@ -209,4 +223,28 @@ class Input {
         return $this;
     }
 
+    /**
+     * Get files.
+     *
+     * @access public
+     * @return mixed  Entire array or key value.
+     */
+    public function getFiles()
+    {
+        return $this->_files;
+    }
+
+    /**
+     * Set the files array.
+     *
+     * @access public
+     * @param  array $files Array of files uploaded to server.
+     * @return $this
+     */
+    public function setFiles(array $files)
+    {
+        $this->_files = $this->sanitize($files);
+
+        return $this;
+    }
 }

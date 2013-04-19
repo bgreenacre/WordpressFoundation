@@ -7,6 +7,7 @@
  * @version $id$
  */
 
+use Pimple;
 use Kummerspeck\Arr as Arr;
 
 /**

@@ -31,6 +31,7 @@ class ThemeContainer extends Pimple {
         $this['fileloader'] = $this->share(function($c)
         {
             return new FileLoader(
+                $c,
                 array(
                     'config'    => $c['paths.config'],
                     'resources' => $c['paths.resources'],
@@ -46,6 +47,7 @@ class ThemeContainer extends Pimple {
                     'post'    => $_POST,
                     'query'   => $_GET,
                     'cookies' => $_COOKIE,
+                    'files'   => $_FILES,
                     )
             );
         });
@@ -75,6 +77,11 @@ class ThemeContainer extends Pimple {
             return new Widgets($c);
         });
 
+        $this['assets'] = $this->share(function($c)
+        {
+            return new Assets($c);
+        });
+
         return $this;
     }
 
@@ -92,6 +99,29 @@ class ThemeContainer extends Pimple {
                 }
             );
         }
+
+        // Add in theme support based on config.
+        $themeOptions = $this['config']->load('theme.options')->asArray();
+
+        foreach ($themeOptions as $optName => $optValue)
+        {
+            if ($optValue === true)
+            {
+                add_theme_support($optName);
+            }
+            elseif (is_array($optValue))
+            {
+                add_theme_support($optName, $optValue);
+            }
+        }
+
+        $this['assets']->load(
+            $this['config']
+                ->load('theme.assets')
+                ->asArray()
+        )
+        ->register();
+
     }
 
 }

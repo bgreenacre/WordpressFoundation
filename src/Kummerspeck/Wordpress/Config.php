@@ -7,6 +7,8 @@
  * @version $id$
  */
 
+use Kummerspeck\Arr as Arr;
+
 /**
  * Config class handles all interactions between loading and saving options
  * to the [wordpress options api](https://codex.wordpress.org/Options_API).
@@ -26,6 +28,15 @@ class Config implements \ArrayAccess {
      * @var array
      */
     protected $_data = array();
+
+    /**
+     * Contains wordpress option values in the
+     * global scope.
+     *
+     * @access protected
+     * @var array
+     */
+    protected $_options = array();
 
     /**
      * The delimiter character to use when getting or
@@ -139,7 +150,7 @@ class Config implements \ArrayAccess {
      *
      * @access public
      * @param  string $key Array index path to load.
-     * @return mixed       Config/Option value.
+     * @return $this
      */
     public function load($key)
     {
@@ -214,7 +225,16 @@ class Config implements \ArrayAccess {
         }
         elseif ( ! $this->getNamespace())
         {
-            return get_option($parts[0]);
+            $optionValue = get_option($parts[0]);
+
+            if ($optionValue !== false)
+            {
+                $this->_options[$parts[0]] = unserialize($optionValue);
+
+                $this->_loaded[] = $parts[0];
+            }
+
+            return $this;
         }
         else
         {
@@ -234,7 +254,13 @@ class Config implements \ArrayAccess {
     {
         $parts = $this->getPathParts($key);
 
-        return (in_array($this->getNamespace() . $parts[0], $this->_loaded));
+        return (
+            isset($parts[0]) &&
+            in_array(
+                $this->getNamespace() . $parts[0],
+                $this->_loaded
+            )
+        );
     }
 
     /**
@@ -266,7 +292,7 @@ class Config implements \ArrayAccess {
             {
                 $filename = $file->getFilename();
 
-                if ($filename[0] === '.' OR $filename[strlen($filename)-1] === '~')
+                if ($filename[0] === '.' || $filename[strlen($filename)-1] === '~')
                 {
                     // Skip all hidden files and UNIX backup files
                     continue;
@@ -284,7 +310,7 @@ class Config implements \ArrayAccess {
                 elseif ($file->getExtension() === $this->_extension)
                 {
                     // Found a config file so load it's contents
-                    $data    = $this->_loadFile(
+                    $data = $this->_loadFile(
                         $filePath . $namespace . $path . $filename,
                         $this->_extension
                     );
@@ -298,7 +324,7 @@ class Config implements \ArrayAccess {
                         $pathKey .= str_replace(
                             DIRECTORY_SEPARATOR,
                             $this->getDelimiter(),
-                            $path
+                            DIRECTORY_SEPARATOR . trim($path, DIRECTORY_SEPARATOR)
                         );
 
                         rtrim($pathKey, $this->getDelimiter());
@@ -374,11 +400,14 @@ class Config implements \ArrayAccess {
      * Get the namespace.
      *
      * @access public
+     * @param  bool   $withDelimiter True returns with delimiter appended else no delimiter.
      * @return string Object namespace
      */
-    public function getNamespace()
+    public function getNamespace($withDelimiter = true)
     {
-        return $this->_namespace;
+        return ($withDelimiter === true)
+            ? $this->_namespace
+            : trim($this->_namespace, $this->_delimiter);
     }
 
     /**
@@ -484,7 +513,7 @@ class Config implements \ArrayAccess {
      */
     public function offsetSet($key, $value)
     {
-        \Kummerspeck\Arr\set_path($this->_data, $key, $value, $this->getDelimiter());
+        Arr\set_path($this->_data, $key, $value, $this->getDelimiter());
     }
 
     /**
@@ -498,17 +527,15 @@ class Config implements \ArrayAccess {
     {
         if ( ! $this->loaded($key))
         {
-            $option = $this->load($key);
-
-            if ($option !== $this)
-            {
-                // If returned value isn't an object then
-                // a global wordpress option is called.
-                return $option;
-            }
+            $this->load($key);
         }
 
-        return \Kummerspeck\Arr\get_path($key, $this->_data, null, $this->getDelimiter());
+        return Arr\get_path(
+            $key,
+            $this->_data,
+            Arr\get_key($key, $this->_options, null),
+            $this->getDelimiter()
+        );
     }
 
     /**
@@ -520,7 +547,7 @@ class Config implements \ArrayAccess {
      */
     public function offsetUnset($key)
     {
-        \Kummerspeck\Arr\unset_path($this->_data, $key, $this->getDelimiter());
+        Arr\unset_path($this->_data, $key, $this->getDelimiter());
     }
 
     /**
@@ -533,10 +560,10 @@ class Config implements \ArrayAccess {
     public function offsetExists($key)
     {
         return (
-            \Kummerspeck\Arr\get_path(
+            Arr\get_path(
                 $key,
-                $this->_path,
-                null,
+                $this->_data,
+                Arr\get_key($key, $this->_data, null),
                 $this->getDelimiter()
             ) !== null
         );
