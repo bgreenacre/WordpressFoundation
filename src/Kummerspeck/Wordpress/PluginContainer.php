@@ -91,6 +91,16 @@ class PluginContainer extends Pimple {
             return new Widgets($c);
         });
 
+        $this['assets'] = $this->share(function($c)
+        {
+            return new Assets($c);
+        });
+
+        $this['urls'] = $this->share(function($c)
+        {
+            return new Urls($c);
+        });
+
         $this['controller'] = $this->protect(function($controller) use ($c)
         {
             if ($controller)

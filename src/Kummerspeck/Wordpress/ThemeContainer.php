@@ -82,6 +82,11 @@ class ThemeContainer extends Pimple {
             return new Assets($c);
         });
 
+        $this['urls'] = $this->share(function($c)
+        {
+            return new Urls($c);
+        });
+
         return $this;
     }
 
