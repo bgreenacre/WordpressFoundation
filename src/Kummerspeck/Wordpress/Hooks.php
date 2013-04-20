@@ -79,6 +79,8 @@ class Hooks {
 
 			return call_user_func_array($callback, $args);
 		}, $priority, $argCount);
+
+		return $this;
 	}
 
 	/**
@@ -108,6 +110,8 @@ class Hooks {
 
 			return call_user_func_array($callback, $args);
 		}, $priority, $argCount);
+
+		return $this;
 	}
 
 	public function activateHook(\Closure $closure)

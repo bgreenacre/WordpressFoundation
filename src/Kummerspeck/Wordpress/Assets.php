@@ -73,6 +73,8 @@ class Assets {
                 'admin_enqueue_scripts',
                 array( &$this, 'enqueueAdminAssets' )
             );
+
+        return $this;
     }
 
     public function load(array $assets)
@@ -84,8 +86,8 @@ class Assets {
             $asset['type']    = Arr\get_key(
                 'type',
                 $asset,
-                ( ($pos = strrpos('.', $asset['uri'])) > 0)
-                    ? strtolower(substr($asset['uri'], $pos))
+                ( ($pos = strrpos($asset['uri'], '.')) > 0)
+                    ? strtolower(substr($asset['uri'], $pos + 1))
                     : null
             );
 
@@ -106,6 +108,8 @@ class Assets {
                     break;
             }
         }
+
+        return $this;
     }
 
     public function registerFrontAssets()
@@ -120,7 +124,7 @@ class Assets {
                 }
             }
 
-            $this->_registerAsset($asset['handle']);
+            $this->_registerAsset($asset, $asset['type']);
         }
     }
 
@@ -136,7 +140,7 @@ class Assets {
                 }
             }
 
-            $this->_registerAsset($asset['handle']);
+            $this->_registerAsset($asset, $asset['type']);
         }
     }
 
@@ -152,7 +156,7 @@ class Assets {
                 }
             }
 
-            $this->_registerAsset($asset['handle']);
+            $this->_registerAsset($asset, $asset['type']);
         }
     }
 
@@ -162,7 +166,7 @@ class Assets {
         {
             if (Arr\get_key('enqueue', $asset) == true)
             {
-                $this->_enqueueAsset($asset['handle']);
+                $this->_enqueueAsset($asset['handle'], $asset['type']);
             }
         }
     }
@@ -173,7 +177,7 @@ class Assets {
         {
             if (Arr\get_key('enqueue', $asset) == true)
             {
-                $this->_enqueueAsset($asset['handle']);
+                $this->_enqueueAsset($asset['handle'], $asset['type']);
             }
         }
     }
@@ -184,7 +188,7 @@ class Assets {
         {
             if (Arr\get_key('enqueue', $asset) == true)
             {
-                $this->_enqueueAsset($asset['handle']);
+                $this->_enqueueAsset($asset['handle'], $asset['type']);
             }
         }
     }

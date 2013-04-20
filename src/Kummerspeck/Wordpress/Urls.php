@@ -42,9 +42,9 @@ class Urls {
         $this->setContainer($container);
     }
 
-    public function assets($uri)
+    public function asset($uri)
     {
-        if (strpos('://', $uri) !== false)
+        if (strpos($uri, '://') !== false)
         {
             return $uri;
         }
