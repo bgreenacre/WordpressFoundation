@@ -42,6 +42,13 @@ class Urls {
         $this->setContainer($container);
     }
 
+    /**
+     * Generate a url for an asset.
+     *
+     * @access public
+     * @param  string $uri A uri or an absolute url.
+     * @return string Normalized absolute url to an asset.
+     */
     public function asset($uri)
     {
         if (strpos($uri, '://') !== false)

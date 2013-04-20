@@ -30,8 +30,31 @@ class Assets {
      */
     protected $_container;
 
+    /**
+     * Array of assets to register and optionally
+     * enqueue in wordpress.
+     *
+     * @access protected
+     * @var array
+     */
     protected $_adminAssets = array();
+
+    /**
+     * Array of assets to register and optionally
+     * enqueue in wordpress.
+     *
+     * @access protected
+     * @var array
+     */
     protected $_loginAssets = array();
+
+    /**
+     * Array of asset to register and optionally
+     * enqueue in wordpress.
+     *
+     * @access protected
+     * @var array
+     */
     protected $_frontAssets = array();
 
     /**
@@ -46,6 +69,13 @@ class Assets {
         $this->setContainer($container);
     }
 
+    /**
+     * Add in the actions to register and
+     * enqueue assets.
+     *
+     * @access public
+     * @return $this
+     */
     public function register()
     {
         $this->_container['hooks']
@@ -77,6 +107,14 @@ class Assets {
         return $this;
     }
 
+    /**
+     * Iterate through array of assets and prepare
+     * each for the register method.
+     *
+     * @access public
+     * @param  array  $assets Array of asset definitions
+     * @return $this
+     */
     public function load(array $assets)
     {
         foreach ($assets as $key => $asset)
@@ -112,6 +150,12 @@ class Assets {
         return $this;
     }
 
+    /**
+     * Register front end assets.
+     *
+     * @access public
+     * @return void
+     */
     public function registerFrontAssets()
     {
         foreach ($this->_frontAssets as $asset)
@@ -128,6 +172,12 @@ class Assets {
         }
     }
 
+    /**
+     * Register login assets.
+     *
+     * @access public
+     * @return void
+     */
     public function registerLoginAssets()
     {
         foreach ($this->_loginAssets as $asset)
@@ -144,6 +194,12 @@ class Assets {
         }
     }
 
+    /**
+     * Register admin assets.
+     *
+     * @access public
+     * @return void
+     */
     public function registerAdminAssets()
     {
         foreach ($this->_adminAssets as $asset)
@@ -160,6 +216,12 @@ class Assets {
         }
     }
 
+    /**
+     * Enqueue front end assets.
+     *
+     * @access public
+     * @return void
+     */
     public function enqueueFrontAssets()
     {
         foreach ($this->_frontAssets as $asset)
@@ -171,6 +233,12 @@ class Assets {
         }
     }
 
+    /**
+     * Enqueue login assets.
+     *
+     * @access public
+     * @return void
+     */
     public function enqueueLoginAssets()
     {
         foreach ($this->_loginAssets as $asset)
@@ -182,6 +250,12 @@ class Assets {
         }
     }
 
+    /**
+     * Enqueue admin assets.
+     *
+     * @access public
+     * @return void
+     */
     public function enqueueAdminAssets()
     {
         foreach ($this->_adminAssets as $asset)
@@ -193,6 +267,14 @@ class Assets {
         }
     }
 
+    /**
+     * Enqueue asset.
+     *
+     * @access protected
+     * @param  string $name Wordpress handle
+     * @param  string $type Style or javascript.
+     * @return void
+     */
     protected function _enqueueAsset($name, $type)
     {
         if ($type == 'css')
@@ -205,6 +287,14 @@ class Assets {
         }
     }
 
+    /**
+     * De-register a registered wordpress asset.
+     *
+     * @access protected
+     * @param  string $name Handle of the registered asset.
+     * @param  string $type Style or Javascript.
+     * @return void
+     */
     protected function _deregisterAsset($name, $type)
     {
         if ($type == 'css')
@@ -217,6 +307,14 @@ class Assets {
         }
     }
 
+    /**
+     * Register an asset in wordpress.
+     *
+     * @access protected
+     * @param  string $asset Asset handle.
+     * @param  string $type  Style or Javascript.
+     * @return void
+     */
     protected function _registerAsset($asset, $type)
     {
         $c = $this->getContainer();
