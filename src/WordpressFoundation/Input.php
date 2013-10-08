@@ -17,12 +17,12 @@
 class Input {
 
     /**
-     * $_POST array
+     * $post array
      *
      * @access protected
      * @var array
      */
-    protected $_post = array();
+    protected $post = array();
 
     /**
      * $_GET array
@@ -30,23 +30,23 @@ class Input {
      * @access protected
      * @var array
      */
-    protected $_query = array();
+    protected $query = array();
 
     /**
-     * $_COOKIES array
+     * $cookies array
      *
      * @access protected
      * @var array
      */
-    protected $_cookies = array();
+    protected $cookies = array();
 
     /**
-     * $_FILES array
+     * $files array
      *
      * @access protected
      * @var array
      */
-    protected $_files = array();
+    protected $files = array();
 
     /**
      * Optionally set the data arrays on object instantiation.
@@ -101,7 +101,7 @@ class Input {
         }
         elseif (is_string($value))
         {
-            if ( (version_compare(PHP_VERSION, '5.4') < 0 AND get_magic_quotes_gpc()) === TRUE)
+            if ( (version_compare(PHP_VERSION, '5.4') < 0 && get_magic_quotes_gpc()) === true)
             {
                 // Remove slashes added by magic quotes
                 $value = stripslashes($value);
@@ -139,10 +139,10 @@ class Input {
     {
         if ($key === null)
         {
-            return $this->_post;
+            return $this->post;
         }
 
-        return array_get($this->_post, $key, $default);
+        return array_get($this->post, $key, $default);
     }
 
     /**
@@ -154,7 +154,7 @@ class Input {
      */
     public function setPost(array $post)
     {
-        $this->_post = $this->sanitize($post);
+        $this->post = $this->sanitize($post);
 
         return $this;
     }
@@ -170,10 +170,10 @@ class Input {
     {
         if ($key === null)
         {
-            return $this->_query;
+            return $this->query;
         }
 
-        return array_get($this->_query, $key, $default);
+        return array_get($this->query, $key, $default);
     }
 
     /**
@@ -185,7 +185,7 @@ class Input {
      */
     public function setQuery(array $query)
     {
-        $this->_query = $this->sanitize($query);
+        $this->query = $this->sanitize($query);
 
         return $this;
     }
@@ -201,10 +201,10 @@ class Input {
     {
         if ($key === null)
         {
-            return $this->_cookies;
+            return $this->cookies;
         }
 
-        return array_get($this->_cookies, $key, $default);
+        return array_get($this->cookies, $key, $default);
     }
 
     /**
@@ -216,7 +216,7 @@ class Input {
      */
     public function setCookies(array $cookies)
     {
-        $this->_cookies = $this->sanitize($cookies);
+        $this->cookies = $this->sanitize($cookies);
 
         return $this;
     }
@@ -229,7 +229,7 @@ class Input {
      */
     public function getFiles()
     {
-        return $this->_files;
+        return $this->files;
     }
 
     /**
@@ -241,8 +241,9 @@ class Input {
      */
     public function setFiles(array $files)
     {
-        $this->_files = $this->sanitize($files);
+        $this->files = $this->sanitize($files);
 
         return $this;
     }
+
 }

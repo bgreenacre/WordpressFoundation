@@ -68,7 +68,11 @@ class Plugin extends Container {
 
         $this['hooks'] = $this->share(function($c)
         {
-            return new Hooks($c);
+            $provider = new Hooks();
+
+            $provider->setContainer($c);
+
+            return $provider;
         });
 
         $this['response'] = function($c)

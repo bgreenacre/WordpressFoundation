@@ -8,7 +8,6 @@
  */
 
 use Exception;
-use Pimple;
 use Symfony\Component\Yaml\Yaml;
 
 /**
