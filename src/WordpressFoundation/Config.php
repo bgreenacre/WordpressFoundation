@@ -7,8 +7,6 @@
  * @version $id$
  */
 
-use Kummerspeck\Arr as Arr;
-
 /**
  * Config class handles all interactions between loading and saving options
  * to the [wordpress options api](https://codex.wordpress.org/Options_API).
@@ -513,7 +511,7 @@ class Config implements \ArrayAccess {
      */
     public function offsetSet($key, $value)
     {
-        Arr\set_path($this->_data, $key, $value, $this->getDelimiter());
+        array_set($this->_data, $key, $value);
     }
 
     /**
@@ -530,11 +528,10 @@ class Config implements \ArrayAccess {
             $this->load($key);
         }
 
-        return Arr\get_path(
-            $key,
+        return array_get(
             $this->_data,
-            Arr\get_key($key, $this->_options, null),
-            $this->getDelimiter()
+            $key,
+            array_get($this->_options, $key, null)
         );
     }
 
@@ -547,7 +544,7 @@ class Config implements \ArrayAccess {
      */
     public function offsetUnset($key)
     {
-        Arr\unset_path($this->_data, $key, $this->getDelimiter());
+        array_forget($this->_data, $key);
     }
 
     /**
@@ -555,18 +552,17 @@ class Config implements \ArrayAccess {
      *
      * @access public
      * @param  string $key Index path.
-     * @return bool        True is Index path found else false.
+     * @return bool        True if Index path found else false.
      */
     public function offsetExists($key)
     {
-        return (
-            Arr\get_path(
-                $key,
-                $this->_data,
-                Arr\get_key($key, $this->_data, null),
-                $this->getDelimiter()
-            ) !== null
+        $exists = array_get(
+            $this->_data,
+            $key,
+            array_get($this->_options, $key, false)
         );
+
+        return ($exists !== false) ? true : false;
     }
 
 }
