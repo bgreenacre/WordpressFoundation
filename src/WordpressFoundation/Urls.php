@@ -35,7 +35,7 @@ class Urls {
             return $uri;
         }
 
-        return rtrim($this->getContainer()['urls.assets'], '/')
+        return rtrim($this->container['urls.assets'], '/')
             . '/'
             . ltrim($uri, '/');
     }

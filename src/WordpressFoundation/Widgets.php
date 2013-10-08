@@ -23,19 +23,21 @@ class Widgets {
 
     public function register()
     {
+        $controller = $this->getProvider('controller');
+
         foreach ($this->widgets as $widgetDefinition)
         {
             wp_register_sidebar_widget(
                 array_get($widgetDefinition, 'id'),
                 array_get($widgetDefinition, 'name'),
-                $this->getProvider('controller')(array_get($widgetDefinition, 'frontController')),
+                $controller(array_get($widgetDefinition, 'frontController')),
                 array_get($widgetDefinition, 'widgetOptions', array())
             );
 
             wp_register_widget_control(
                 array_get($widgetDefinition, 'id'),
                 array_get($widgetDefinition, 'name'),
-                $this->getProvider('controller')(
+                $controller(
                     array_get(
                         $widgetDefinition,
                         'formController',
@@ -72,7 +74,7 @@ class Widgets {
             {
                 $pathInfo = pathinfo($file->getPathName());
 
-                $widgetDefinition = $this->_container['file']
+                $widgetDefinition = $this->getProvider('fileloader')
                     ->load(
                         $pathInfo['dirname'] . DIRECTORY_SEPARATOR . $pathInfo['filename'],
                         $pathInfo['extension']

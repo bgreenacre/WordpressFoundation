@@ -7,6 +7,8 @@
  * @version $id$
  */
 
+use Exception;
+
 /**
  * Loads and parse view files.
  *
@@ -40,9 +42,9 @@ class ViewManager {
         {
             // Use FileLoader to get rendered view.
             $this->getProvider('fileloader')
-                ->load($this->getContainer()['paths.views'] . $view, 'php');
+                ->load($this->container['paths.views'] . $view, 'php');
         }
-        catch (\Exception $e)
+        catch (Exception $e)
         {
             // Delete the output buffer
             ob_end_clean();

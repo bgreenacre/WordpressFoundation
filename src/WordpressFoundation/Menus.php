@@ -66,6 +66,8 @@ class Menus {
      */
     public function register()
     {
+        $controller = $this->getProvider('controller');
+
         foreach ($this->menus as $menu)
         {
             switch(array_get($menu, 'type'))
@@ -77,7 +79,7 @@ class Menus {
                         array_get($menu, 'menu_title'),
                         array_get($menu, 'capability', 'activate_plugins'),
                         array_get($menu, 'menu_slug'),
-                        $this->getProvider('controller')(array_get($menu, 'controller'))
+                        $controller(array_get($menu, 'controller'))
                     );
 
                     break;
@@ -88,7 +90,7 @@ class Menus {
                         array_get($menu, 'menu_title'),
                         array_get($menu, 'capability', 'activate_plugins'),
                         array_get($menu, 'menu_slug'),
-                        $this->getProvider('controller')(array_get($menu, 'controller')),
+                        $controller(array_get($menu, 'controller')),
                         array_get($menu, 'icon_url'),
                         array_get($menu, 'position')
                     );
