@@ -75,11 +75,6 @@ class Plugin extends Container {
             return $provider;
         });
 
-        $this['response'] = function($c)
-        {
-            return new Response($c);
-        };
-
         $this['menus'] = $this->share(function($c)
         {
             $provider = new Menus($c['config']->load('menus')->asArray());
