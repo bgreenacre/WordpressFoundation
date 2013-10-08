@@ -1,8 +1,8 @@
-<?php namespace Kummerspeck\Wordpress;
+<?php namespace WordpressFoundation;
 /**
- * Kummerspeck Wordpress Utilities
+ * WordpressFoundation Utilities
  *
- * @package Kummerspeck/WordpressFoundation
+ * @package WordpressFoundation
  * @author Brian Greenacre <bgreenacre42@gmail.com>
  * @version $id$
  */
@@ -12,7 +12,7 @@ use Pimple;
 /**
  * Manage hooks added by plugin.
  *
- * @package Kummerspeck/WordpressFoundation
+ * @package WordpressFoundation
  * @author Brian Greenacre <bgreenacre42@gmail.com>
  * @version $id$
  */

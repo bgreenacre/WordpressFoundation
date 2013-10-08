@@ -1,8 +1,8 @@
-<?php namespace Kummerspeck\Wordpress;
+<?php namespace WordpressFoundation;
 /**
- * Kummerspeck Wordpress Utilities
+ * WordpressFoundation Utilities
  *
- * @package Kummerspeck/WordpressFoundation
+ * @package WordpressFoundation
  * @author Brian Greenacre <bgreenacre42@gmail.com>
  * @version $id$
  */
@@ -15,7 +15,7 @@ use Kummerspeck\Arr as Arr;
  * This class can also load option values from a config file which
  * is useful when setting default values in an options form.'
  *
- * @package Kummerspeck/WordpressFoundation
+ * @package WordpressFoundation
  * @author Brian Greenacre <bgreenacre42@gmail.com>
  * @version $id$
  */

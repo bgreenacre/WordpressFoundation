@@ -1,5 +1,5 @@
 {
-	"name": "kummerspeck/wordpress-foundation",
+	"name": "bgreenacre/wordpress-foundation",
 	"description": "A collection of classes to help development of wordpress plugins.",
 	"keywords": ["wordpress", "library"],
     "authors": [
@@ -10,7 +10,7 @@
         }
     ],
     "autoload": {
-        "psr-0": {"Kummerspeck\\Wordpress": "src/"},
+        "psr-0": {"WordpressFoundation": "src/"},
         "files": ["src/functions/Arr.php"]
     },
     "require": {

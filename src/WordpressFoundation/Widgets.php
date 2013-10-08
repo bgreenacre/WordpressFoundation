@@ -1,8 +1,8 @@
-<?php namespace Kummerspeck\Wordpress;
+<?php namespace WordpressFoundation;
 /**
- * Kummerspeck Wordpress Utilities
+ * WordpressFoundation Utilities
  *
- * @package Kummerspeck/WordpressFoundation
+ * @package WordpressFoundation
  * @author Brian Greenacre <bgreenacre42@gmail.com>
  * @version $id$
  */
@@ -13,7 +13,7 @@ use Kummerspeck\Arr as Arr;
 /**
  * Provider class used to add widgets to wordpress.
  * 
- * @package Kummerspeck/WordpressFoundation
+ * @package WordpressFoundation
  * @author Brian Greenacre <bgreenacre42@gmail.com>
  * @version $id$
  */

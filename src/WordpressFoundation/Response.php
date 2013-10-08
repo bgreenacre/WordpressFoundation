@@ -1,4 +1,4 @@
-<?php namespace Kummerspeck\Wordpress;
+<?php namespace WordpressFoundation;
 
 class Response {
 
