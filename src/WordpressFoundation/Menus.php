@@ -7,8 +7,6 @@
  * @version $id$
  */
 
-use Pimple;
-
 /**
  *
  * @package WordpressFoundation
@@ -17,34 +15,25 @@ use Pimple;
  */
 class Menus {
 
+    use WordpressFoundation\Traits\ContainerAware;
+
     /**
      * Array of menus to add in wordpress.
      *
      * @var array
      * @access protected
      */
-    protected $_menus = array();
-
-    /**
-     * Plugin container object.
-     *
-     * @access protected
-     * @var Pimple
-     */
-    protected $_container;
+    protected $menus = array();
 
     /**
      * Initialize and add an array of menus.
      *
      * @access public
-     * @param Pimple $container Container object.
      * @param array  $menus     Array of menus.
      * @return void
      */
-    public function __construct(Pimple $container, array $menus = null)
+    public function __construct(array $menus = null)
     {
-        $this->setContainer($container);
-
         if ($menus !== null)
         {
             foreach ($menus as $menuDefinition)
@@ -63,7 +52,7 @@ class Menus {
      */
     public function add(array $properties)
     {
-        $this->_menus[] = $properties;
+        $this->menus[] = $properties;
 
         return $this;
     }
@@ -77,7 +66,7 @@ class Menus {
      */
     public function register()
     {
-        foreach ($this->_menus as $menu)
+        foreach ($this->menus as $menu)
         {
             switch(Arr\get_key('type', $menu))
             {
@@ -88,7 +77,7 @@ class Menus {
                         array_get($menu, 'menu_title'),
                         array_get($menu, 'capability', 'activate_plugins'),
                         array_get($menu, 'menu_slug'),
-                        $this->_container['controller'](array_get($menu, 'controller'))
+                        $this->getProvider('controller')(array_get($menu, 'controller'))
                     );
 
                     break;
@@ -99,7 +88,7 @@ class Menus {
                         array_get($menu, 'menu_title'),
                         array_get($menu, 'capability', 'activate_plugins'),
                         array_get($menu, 'menu_slug'),
-                        $this->_container['controller'](array_get($menu, 'controller')),
+                        $this->getProvider('controller')(array_get($menu, 'controller')),
                         array_get($menu, 'icon_url'),
                         array_get($menu, 'position')
                     );
@@ -118,7 +107,7 @@ class Menus {
      */
     public function setMenus(array $menus)
     {
-        $this->_menus = $menus;
+        $this->menus = $menus;
 
         return $this;
     }
@@ -131,32 +120,7 @@ class Menus {
      */
     public function getMenus()
     {
-        return $this->_menus;
-    }
-
-    /**
-     * Set container object.
-     *
-     * @access public
-     * @param Pimple $container Plugin container object.
-     * @return $this
-     */
-    public function setContainer(Pimple $container)
-    {
-        $this->_container = $container;
-
-        return $this;
-    }
-
-    /**
-     * Get container object.
-     *
-     * @access public
-     * @return Pimple
-     */
-    public function getContainer()
-    {
-        return $this->_container;
+        return $this->menus;
     }
 
 }
