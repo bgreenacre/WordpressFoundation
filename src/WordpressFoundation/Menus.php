@@ -8,7 +8,6 @@
  */
 
 use Pimple;
-use Kummerspeck\Arr as Arr;
 
 /**
  *
@@ -84,25 +83,25 @@ class Menus {
             {
                 case 'submenu':
                     add_submenu_page(
-                        Arr\get_key('parent', $menu),
-                        Arr\get_key('page_title', $menu),
-                        Arr\get_key('menu_title', $menu),
-                        Arr\get_key('capability', $menu, 'activate_plugins'),
-                        Arr\get_key('menu_slug', $menu, null),
-                        $this->_container['controller'](Arr\get_key('controller', $menu))
+                        array_get($menu, 'parent'),
+                        array_get($menu, 'page_title'),
+                        array_get($menu, 'menu_title'),
+                        array_get($menu, 'capability', 'activate_plugins'),
+                        array_get($menu, 'menu_slug'),
+                        $this->_container['controller'](array_get($menu, 'controller'))
                     );
 
                     break;
                 case 'page':
                 default:
                     add_menu_page(
-                        Arr\get_key('page_title', $menu),
-                        Arr\get_key('menu_title', $menu),
-                        Arr\get_key('capability', $menu, 'activate_plugins'),
-                        Arr\get_key('menu_slug', $menu),
-                        $this->_container['controller'](Arr\get_key('controller', $menu)),
-                        Arr\get_key('icon_url', $menu),
-                        Arr\get_key('position', $menu)
+                        array_get($menu, 'page_title'),
+                        array_get($menu, 'menu_title'),
+                        array_get($menu, 'capability', 'activate_plugins'),
+                        array_get($menu, 'menu_slug'),
+                        $this->_container['controller'](array_get($menu, 'controller')),
+                        array_get($menu, 'icon_url'),
+                        array_get($menu, 'position')
                     );
 
                     break;
