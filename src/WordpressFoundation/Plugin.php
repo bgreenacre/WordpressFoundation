@@ -82,12 +82,20 @@ class Plugin extends Container {
 
         $this['menus'] = $this->share(function($c)
         {
-            return new Menus($c, $c['config']->load('menus')->asArray());
+            $provider = new Menus($c['config']->load('menus')->asArray());
+
+            $provider->setContainer($c);
+
+            return $provider;
         });
 
         $this['post.types'] = $this->share(function($c)
         {
-            return new PostTypes($c, $c['config']->load('post.types')->asArray());
+            $provider = new PostTypes($c['config']->load('post.types')->asArray());
+
+            $provider->setContainer($c);
+
+            return $provider;
         });
 
         $this['widgets'] = $this->share(function($c)
