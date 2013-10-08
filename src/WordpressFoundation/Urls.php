@@ -7,8 +7,6 @@
  * @version $id$
  */
 
-use Pimple;
-
 /**
  * Config class handles all interactions between loading and saving options
  * to the [wordpress options api](https://codex.wordpress.org/Options_API).
@@ -21,25 +19,7 @@ use Pimple;
  */
 class Urls {
 
-    /**
-     * Plugin container object.
-     *
-     * @access protected
-     * @var Pimple
-     */
-    protected $_container;
-
-    /**
-     * Constructor.
-     *
-     * @access public
-     * @param Pimple $container [description]
-     * @return void
-     */
-    public function __construct(Pimple $container)
-    {
-        $this->setContainer($container);
-    }
+    use WordpressFoundation\Traits\ContainerAware;
 
     /**
      * Generate a url for an asset.
@@ -55,34 +35,9 @@ class Urls {
             return $uri;
         }
 
-        return rtrim($this->_container['urls.assets'], '/')
+        return rtrim($this->getContainer()['urls.assets'], '/')
             . '/'
             . ltrim($uri, '/');
-    }
-
-    /**
-     * Set container object.
-     *
-     * @access public
-     * @param Pimple $container Plugin container object.
-     * @return $this
-     */
-    public function setContainer(Pimple $container)
-    {
-        $this->_container = $container;
-
-        return $this;
-    }
-
-    /**
-     * Get container object.
-     *
-     * @access public
-     * @return Pimple
-     */
-    public function getContainer()
-    {
-        return $this->_container;
     }
 
 }

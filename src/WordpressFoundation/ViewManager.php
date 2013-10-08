@@ -16,25 +16,7 @@
  */
 class ViewManager {
 
-    /**
-     * Plugin container object.
-     *
-     * @access protected
-     * @var PluginContainer
-     */
-    protected $_container;
-
-    /**
-     * Construct object.
-     *
-     * @access public
-     * @param PluginContainer $container Plugins container object.
-     * @return void
-     */
-    public function __construct(PluginContainer $container)
-    {
-        $this->setContainer($container);
-    }
+    use WordpressFoundation\Traits\ContainerAware;
 
     /**
      * Load a view and render it.
@@ -46,8 +28,6 @@ class ViewManager {
      */
     public function make($view, array $data = null)
     {
-        $c = $this->getContainer();
-
         if ($data !== null)
         {
             extract($data, EXTR_SKIP);
@@ -59,7 +39,8 @@ class ViewManager {
         try
         {
             // Use FileLoader to get rendered view.
-            $c['fileloader']->load($c['paths.views'] . $view, 'php');
+            $this->getProvider('fileloader')
+                ->load($this->getContainer()['paths.views'] . $view, 'php');
         }
         catch (\Exception $e)
         {
@@ -72,31 +53,6 @@ class ViewManager {
 
         // Get the captured output and close the buffer
         return ob_get_clean();
-    }
-
-    /**
-     * Set container object.
-     *
-     * @access public
-     * @param PluginContainer $container Plugin container object.
-     * @return $this
-     */
-    public function setContainer(PluginContainer $container)
-    {
-        $this->_container = $container;
-
-        return $this;
-    }
-
-    /**
-     * Get container object.
-     *
-     * @access public
-     * @return PluginContainer
-     */
-    public function getContainer()
-    {
-        return $this->_container;
     }
 
 }

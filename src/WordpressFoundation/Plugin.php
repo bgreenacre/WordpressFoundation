@@ -109,7 +109,11 @@ class Plugin extends Container {
 
         $this['urls'] = $this->share(function($c)
         {
-            return new Urls($c);
+            $provider = new Urls();
+
+            $provider->setContainer($c);
+
+            return $provider;
         });
 
         $this['controller'] = $this->protect(function($controller) use ($c)
