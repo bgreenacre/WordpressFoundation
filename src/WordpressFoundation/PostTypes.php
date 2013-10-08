@@ -7,9 +7,6 @@
  * @version $id$
  */
 
-use Pimple;
-use Kummerspeck\Arr as Arr;
-
 /**
  *
  * @package WordpressFoundation
@@ -18,25 +15,24 @@ use Kummerspeck\Arr as Arr;
  */
 class PostTypes {
 
-    protected $_types = array();
+    use WordpressFoundation\Traits\ContainerAware;
 
     /**
-     * Plugin container object.
+     * Holds all post types.
      *
      * @access protected
-     * @var Pimple
+     * @var array
      */
-    protected $_container;
+    protected $types = array();
 
-    public function __construct(Pimple $container, array $types)
+    public function __construct(array $types)
     {
-        $this->setContainer($container);
         $this->setTypes($types);
     }
 
     public function register()
     {
-        foreach ($this->_types as $type => $args)
+        foreach ($this->types as $type => $args)
         {
             register_post_type($type, $args);
         }
@@ -46,11 +42,11 @@ class PostTypes {
 
     public function addType($type, array $args = array(), array $subMenus = null)
     {
-        $this->_types[$type] = $args;
+        $this->types[$type] = $args;
 
         if ($subMenus !== null)
         {
-            $this->_container['menus']->add($subMenus);
+            $this->getProvider('menus')->add($subMenus);
         }
 
         return $this;
@@ -72,32 +68,7 @@ class PostTypes {
 
     public function getTypes()
     {
-        return $this->_types;
-    }
-
-    /**
-     * Set container object.
-     *
-     * @access public
-     * @param Pimple $container Plugin container object.
-     * @return $this
-     */
-    public function setContainer(Pimple $container)
-    {
-        $this->_container = $container;
-
-        return $this;
-    }
-
-    /**
-     * Get container object.
-     *
-     * @access public
-     * @return Pimple
-     */
-    public function getContainer()
-    {
-        return $this->_container;
+        return $this->types;
     }
 
 }

@@ -7,7 +7,8 @@
  * @version $id$
  */
 
-use Pimple;
+use Closure;
+use InvalidArgumentException;
 
 /**
  * Manage hooks added by plugin.
@@ -18,13 +19,7 @@ use Pimple;
  */
 class Hooks {
 
-    /**
-     * Plugin container object.
-     *
-     * @access protected
-     * @var Pimple
-     */
-	protected $_container;
+    use WordpressFoundation\Traits\ContainerAware;
 
 	/**
 	 * Default priority to set on hook.
@@ -32,7 +27,7 @@ class Hooks {
 	 * @access protected
 	 * @var integer
 	 */
-	protected $_defaultPriority = 10;
+	protected $defaultPriority = 10;
 
 	/**
 	 * Construct object and optionally change default priority.
@@ -41,10 +36,8 @@ class Hooks {
 	 * @param integer $defaultPriority Default priority to set on hook.
 	 * @return void
 	 */
-	public function __construct(Pimple $container, $defaultPriority = null)
+	public function __construct($defaultPriority = null)
 	{
-		$this->setContainer($container);
-
 		if ($defaultPriority !== null)
 		{
 			// Set default priority
@@ -63,19 +56,17 @@ class Hooks {
 	 */
 	public function addAction($action, $callback, $priority = null, $argCount = 1)
 	{
-		$c = $this->getContainer();
-
 		if ($priority === null)
 		{
 			$priority = $this->getDefaultPriority();
 		}
 
-		add_action($action, function() use ($c, $callback)
+		add_action($action, function() use ($callback)
 		{
 			// Wrap callback in closure so it can
 			// take the container as an arg.
 			$args = func_get_args();
-			array_unshift($args, $c);
+			array_unshift($args, $this->getContainer());
 
 			return call_user_func_array($callback, $args);
 		}, $priority, $argCount);
@@ -94,19 +85,17 @@ class Hooks {
 	 */
 	public function addFilter($filter, $callback, $priority = null, $argCount = 1)
 	{
-		$c = $this->getContainer();
-
 		if ($priority === null)
 		{
 			$priority = $this->getDefaultPriority();
 		}
 
-		add_filter($filter, function() use ($c, $callback)
+		add_filter($filter, function() use ($callback)
 		{
 			// Wrap callback in closure so it can
 			// take the container as an arg.
 			$args = func_get_args();
-			array_unshift($args, $c);
+			array_unshift($args, $this->getContainer());
 
 			return call_user_func_array($callback, $args);
 		}, $priority, $argCount);
@@ -114,14 +103,12 @@ class Hooks {
 		return $this;
 	}
 
-	public function activateHook(\Closure $closure)
+	public function activateHook(Closure $closure)
 	{
-		$c = $this->getContainer();
-
-		register_activation_hook($c['plugin.filename'], function() use ($c, $closure)
+		register_activation_hook($this->getContainer()['plugin.filename'], function() use ($closure)
 		{
 			$args = func_get_args();
-			array_unshift($args, $c);
+			array_unshift($args, $this->getContainer());
 
 			return call_user_func_array($closure, $args);
 		});
@@ -131,11 +118,10 @@ class Hooks {
 
 	public function deactivateHook(\Closure $closure)
 	{
-		$c = $this->getContainer();
-		register_activation_hook($c['plugin.filename'], function() use ($c, $closure)
+		register_activation_hook($this->getContainer()['plugin.filename'], function() use ($closure)
 		{
 			$args = func_get_args();
-			array_unshift($args, $c);
+			array_unshift($args, $this->getContainer());
 
 			return call_user_func_array($closure, $args);
 		});
@@ -155,10 +141,10 @@ class Hooks {
 	{
 		if ( ! ctype_digit($priority))
 		{
-			throw new \InvalidArgumentException('Invalid priority value for Hooks object.');
+			throw new InvalidArgumentException('Invalid priority value for Hooks object.');
 		}
 
-		$this->_defaultPriority = (int) $priority;
+		$this->defaultPriority = (int) $priority;
 
 		return $this;
 	}
@@ -171,32 +157,7 @@ class Hooks {
 	 */
 	public function getDefaultPriority()
 	{
-		return $this->_defaultPriority;
+		return $this->defaultPriority;
 	}
-
-    /**
-     * Set container object.
-     *
-     * @access public
-     * @param Pimple $container Plugin container object.
-     * @return $this
-     */
-    public function setContainer(Pimple $container)
-    {
-        $this->_container = $container;
-
-        return $this;
-    }
-
-    /**
-     * Get container object.
-     *
-     * @access public
-     * @return Pimple
-     */
-    public function getContainer()
-    {
-        return $this->_container;
-    }
 
 }

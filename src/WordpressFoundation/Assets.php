@@ -7,8 +7,6 @@
  * @version $id$
  */
 
-use Pimple;
-
 /**
  * Config class handles all interactions between loading and saving options
  * to the [wordpress options api](https://codex.wordpress.org/Options_API).
@@ -21,13 +19,7 @@ use Pimple;
  */
 class Assets {
 
-    /**
-     * Plugin container object.
-     *
-     * @access protected
-     * @var Pimple
-     */
-    protected $_container;
+    use WordpressFoundation\Traits\ContainerAware;
 
     /**
      * Array of assets to register and optionally
@@ -36,7 +28,7 @@ class Assets {
      * @access protected
      * @var array
      */
-    protected $_adminAssets = array();
+    protected $adminAssets = array();
 
     /**
      * Array of assets to register and optionally
@@ -45,7 +37,7 @@ class Assets {
      * @access protected
      * @var array
      */
-    protected $_loginAssets = array();
+    protected $loginAssets = array();
 
     /**
      * Array of asset to register and optionally
@@ -54,19 +46,7 @@ class Assets {
      * @access protected
      * @var array
      */
-    protected $_frontAssets = array();
-
-    /**
-     * Constructor.
-     *
-     * @access public
-     * @param Pimple $container [description]
-     * @return void
-     */
-    public function __construct(Pimple $container)
-    {
-        $this->setContainer($container);
-    }
+    protected $frontAssets = array();
 
     /**
      * Add in the actions to register and
@@ -77,7 +57,7 @@ class Assets {
      */
     public function register()
     {
-        $this->_container['hooks']
+        $this->getProvider('hooks')
             ->addAction(
                 'init',
                 array( &$this, 'registerFrontAssets' )
@@ -133,16 +113,16 @@ class Assets {
             switch($asset['context'])
             {
                 case 'login':
-                    $this->_loginAssets[] = $asset;
+                    $this->loginAssets[] = $asset;
 
                     break;
                 case 'admin':
-                    $this->_adminAssets[] = $asset;
+                    $this->adminAssets[] = $asset;
                     
                     break;
                 case 'front':
                 default:
-                    $this->_frontAssets[] = $asset;
+                    $this->frontAssets[] = $asset;
                     
                     break;
             }
@@ -159,17 +139,17 @@ class Assets {
      */
     public function registerFrontAssets()
     {
-        foreach ($this->_frontAssets as $asset)
+        foreach ($this->frontAssets as $asset)
         {
             if (isset($asset['replaces']))
             {
                 foreach ( (array) $asset['replaces'] as $replace)
                 {
-                    $this->_deregisterAsset($replace, $asset['type']);
+                    $this->deregisterAsset($replace, $asset['type']);
                 }
             }
 
-            $this->_registerAsset($asset, $asset['type']);
+            $this->registerAsset($asset, $asset['type']);
         }
     }
 
@@ -181,17 +161,17 @@ class Assets {
      */
     public function registerLoginAssets()
     {
-        foreach ($this->_loginAssets as $asset)
+        foreach ($this->loginAssets as $asset)
         {
             if (isset($asset['replaces']))
             {
                 foreach ( (array) $asset['replaces'] as $replace)
                 {
-                    $this->_deregisterAsset($replace, $asset['type']);
+                    $this->deregisterAsset($replace, $asset['type']);
                 }
             }
 
-            $this->_registerAsset($asset, $asset['type']);
+            $this->registerAsset($asset, $asset['type']);
         }
     }
 
@@ -203,17 +183,17 @@ class Assets {
      */
     public function registerAdminAssets()
     {
-        foreach ($this->_adminAssets as $asset)
+        foreach ($this->adminAssets as $asset)
         {
             if (isset($asset['replaces']))
             {
                 foreach ( (array) $asset['replaces'] as $replace)
                 {
-                    $this->_deregisterAsset($replace, $asset['type']);
+                    $this->deregisterAsset($replace, $asset['type']);
                 }
             }
 
-            $this->_registerAsset($asset, $asset['type']);
+            $this->registerAsset($asset, $asset['type']);
         }
     }
 
@@ -225,11 +205,11 @@ class Assets {
      */
     public function enqueueFrontAssets()
     {
-        foreach ($this->_frontAssets as $asset)
+        foreach ($this->frontAssets as $asset)
         {
             if (array_get($asset, 'enqueue') == true)
             {
-                $this->_enqueueAsset($asset['handle'], $asset['type']);
+                $this->enqueueAsset($asset['handle'], $asset['type']);
             }
         }
     }
@@ -242,11 +222,11 @@ class Assets {
      */
     public function enqueueLoginAssets()
     {
-        foreach ($this->_loginAssets as $asset)
+        foreach ($this->loginAssets as $asset)
         {
             if (array_get($asset, 'enqueue') == true)
             {
-                $this->_enqueueAsset($asset['handle'], $asset['type']);
+                $this->enqueueAsset($asset['handle'], $asset['type']);
             }
         }
     }
@@ -259,11 +239,11 @@ class Assets {
      */
     public function enqueueAdminAssets()
     {
-        foreach ($this->_adminAssets as $asset)
+        foreach ($this->adminAssets as $asset)
         {
             if (array_get($asset, 'enqueue') == true)
             {
-                $this->_enqueueAsset($asset['handle'], $asset['type']);
+                $this->enqueueAsset($asset['handle'], $asset['type']);
             }
         }
     }
@@ -276,7 +256,7 @@ class Assets {
      * @param  string $type Style or javascript.
      * @return void
      */
-    protected function _enqueueAsset($name, $type)
+    protected function enqueueAsset($name, $type)
     {
         if ($type == 'css')
         {
@@ -296,7 +276,7 @@ class Assets {
      * @param  string $type Style or Javascript.
      * @return void
      */
-    protected function _deregisterAsset($name, $type)
+    protected function deregisterAsset($name, $type)
     {
         if ($type == 'css')
         {
@@ -316,15 +296,13 @@ class Assets {
      * @param  string $type  Style or Javascript.
      * @return void
      */
-    protected function _registerAsset($asset, $type)
+    protected function registerAsset($asset, $type)
     {
-        $c = $this->getContainer();
-
         if ($type == 'css')
         {
             wp_register_style(
                 $asset['handle'],
-                $c['url']->asset($asset['uri']),
+                $this->getProvider('url')->asset($asset['uri']),
                 array_get($asset, 'depends', array()),
                 array_get($asset, 'version'),
                 array_get($asset, 'in_footer', false)
@@ -334,37 +312,12 @@ class Assets {
         {
             wp_register_script(
                 $asset['handle'],
-                $c['url']->asset($asset['uri']),
+                $this->getProvider('url')->asset($asset['uri']),
                 array_get($asset, 'depends', array()),
                 array_get($asset, 'version'),
                 array_get($asset, 'in_footer', false)
             );
         }
-    }
-
-    /**
-     * Set container object.
-     *
-     * @access public
-     * @param Pimple $container Plugin container object.
-     * @return $this
-     */
-    public function setContainer(Pimple $container)
-    {
-        $this->_container = $container;
-
-        return $this;
-    }
-
-    /**
-     * Get container object.
-     *
-     * @access public
-     * @return Pimple
-     */
-    public function getContainer()
-    {
-        return $this->_container;
     }
 
 }

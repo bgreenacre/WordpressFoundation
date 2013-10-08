@@ -16,7 +16,7 @@ use Pimple;
  * @author Brian Greenacre <bgreenacre42@gmail.com>
  * @version $id$
  */
-class PluginContainer extends Pimple {
+class Plugin extends Container {
 
     /**
      * Bootstrap the plugin by loading/setting
@@ -31,11 +31,10 @@ class PluginContainer extends Pimple {
         $this['fileloader'] = $this->share(function($c)
         {
             return new FileLoader(
-                $c,
                 array(
                     'config'    => $c['paths.config'],
                     'resources' => $c['paths.resources'],
-                    )
+                )
             );
         });
 
@@ -54,7 +53,11 @@ class PluginContainer extends Pimple {
         // Add the view manager.
         $this['view'] = $this->share(function($c)
         {
-            return new ViewManager($c);
+            $provider = new ViewManager();
+
+            $provider->setContainer($c);
+
+            return $provider;
         });
 
         // Add the config/options loader.
@@ -68,22 +71,29 @@ class PluginContainer extends Pimple {
 
         $this['hooks'] = $this->share(function($c)
         {
-            return new Hooks($c);
-        });
+            $provider = new Hooks();
 
-        $this['response'] = function($c)
-        {
-            return new Response($c);
-        };
+            $provider->setContainer($c);
+
+            return $provider;
+        });
 
         $this['menus'] = $this->share(function($c)
         {
-            return new Menus($c, $c['config']->load('menus')->asArray());
+            $provider = new Menus($c['config']->load('menus')->asArray());
+
+            $provider->setContainer($c);
+
+            return $provider;
         });
 
         $this['post.types'] = $this->share(function($c)
         {
-            return new PostTypes($c, $c['config']->load('post.types')->asArray());
+            $provider = new PostTypes($c['config']->load('post.types')->asArray());
+
+            $provider->setContainer($c);
+
+            return $provider;
         });
 
         $this['widgets'] = $this->share(function($c)
@@ -93,12 +103,20 @@ class PluginContainer extends Pimple {
 
         $this['assets'] = $this->share(function($c)
         {
-            return new Assets($c);
+            $provider = new Assets();
+
+            $provider->setContainer($c);
+
+            return $provider;
         });
 
         $this['urls'] = $this->share(function($c)
         {
-            return new Urls($c);
+            $provider = new Urls();
+
+            $provider->setContainer($c);
+
+            return $provider;
         });
 
         $this['controller'] = $this->protect(function($controller) use ($c)
