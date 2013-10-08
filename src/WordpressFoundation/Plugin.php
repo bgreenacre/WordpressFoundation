@@ -16,7 +16,7 @@ use Pimple;
  * @author Brian Greenacre <bgreenacre42@gmail.com>
  * @version $id$
  */
-class PluginContainer extends Pimple {
+class Plugin extends Container {
 
     /**
      * Bootstrap the plugin by loading/setting
@@ -93,7 +93,11 @@ class PluginContainer extends Pimple {
 
         $this['assets'] = $this->share(function($c)
         {
-            return new Assets($c);
+            $provider = new Assets();
+
+            $provider->setContainer($c);
+
+            return $provider;
         });
 
         $this['urls'] = $this->share(function($c)

@@ -7,6 +7,8 @@
  * @version $id$
  */
 
+use InvalidArgumentException;
+
 /**
  * Wrapper for the [transient api](https://codex.wordpress.org/Transients_API)
  * 
@@ -22,7 +24,7 @@ class Cache {
 	 * @access protected
 	 * @var integer
 	 */
-	protected $_defaultTTL;
+	protected $defaultTTL;
 
 	/**
 	 * Set the default TTL variable in the constructor.
@@ -106,10 +108,10 @@ class Cache {
 	{
 		if ( ! ctype_digit($ttl))
 		{
-			throw new \InvalidArgumentException('Invalid TTL value for cache object.');
+			throw new InvalidArgumentException('Invalid TTL value for cache object.');
 		}
 
-		$this->_defaultTTL = (int) $int;
+		$this->defaultTTL = (int) $int;
 
 		return $this;
 	}
@@ -122,7 +124,7 @@ class Cache {
 	 */
 	public function getDefaultTTL()
 	{
-		return $this->_defaultTTL;
+		return $this->defaultTTL;
 	}
 
 }

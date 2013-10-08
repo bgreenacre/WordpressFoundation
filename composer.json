@@ -13,7 +13,7 @@
         "psr-0": {"WordpressFoundation": "src/"}
     },
     "require": {
-    	"php": ">=5.3.3",
+    	"php": ">=5.4.0",
         "symfony/yaml": "2.2.*@dev",
         "pimple/pimple": "dev-master",
         "illuminate/support": "4.0.*"
