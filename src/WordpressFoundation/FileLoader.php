@@ -8,6 +8,7 @@
  */
 
 use Exception;
+use Closure;
 use Symfony\Component\Yaml\Yaml;
 
 /**
@@ -87,7 +88,7 @@ class FileLoader {
     {
         // Load file contents and parse contents based on
         // file extension or make a call if it is a Closure.
-        if ($extension instanceof \Closure)
+        if ($extension instanceof Closure)
         {
             return $extension($file, $c);
         }

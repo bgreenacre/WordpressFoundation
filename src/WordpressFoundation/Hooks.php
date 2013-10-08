@@ -8,6 +8,7 @@
  */
 
 use Closure;
+use InvalidArgumentException;
 
 /**
  * Manage hooks added by plugin.
@@ -140,7 +141,7 @@ class Hooks {
 	{
 		if ( ! ctype_digit($priority))
 		{
-			throw new \InvalidArgumentException('Invalid priority value for Hooks object.');
+			throw new InvalidArgumentException('Invalid priority value for Hooks object.');
 		}
 
 		$this->defaultPriority = (int) $priority;

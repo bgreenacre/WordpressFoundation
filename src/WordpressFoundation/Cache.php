@@ -75,7 +75,7 @@ class Cache {
 		elseif ( ! ctype_digit($ttl))
 		{
 			// Bad argument value.
-			throw new \InvalidArgumentException('Invalid TTL value for cache object.');
+			throw new InvalidArgumentException('Invalid TTL value for cache object.');
 		}
 
 		set_transient($key, $value, $ttl);

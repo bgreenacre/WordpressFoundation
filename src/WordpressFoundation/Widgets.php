@@ -28,9 +28,7 @@ class Widgets {
             wp_register_sidebar_widget(
                 array_get($widgetDefinition, 'id'),
                 array_get($widgetDefinition, 'name'),
-                $this->getProvider('controller')(
-                    array_get($widgetDefinition, 'frontController')
-                ),
+                $this->getProvider('controller')(array_get($widgetDefinition, 'frontController')),
                 array_get($widgetDefinition, 'widgetOptions', array())
             );
 

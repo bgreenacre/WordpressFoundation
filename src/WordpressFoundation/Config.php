@@ -8,6 +8,7 @@
  */
 
 use ArrayAccess;
+use DirectoryIterator;
 
 /**
  * Config class handles all interactions between loading and saving options

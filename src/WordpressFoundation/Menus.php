@@ -68,7 +68,7 @@ class Menus {
     {
         foreach ($this->menus as $menu)
         {
-            switch(Arr\get_key('type', $menu))
+            switch(array_get($menu, 'type'))
             {
                 case 'submenu':
                     add_submenu_page(

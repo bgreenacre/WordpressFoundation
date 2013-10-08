@@ -31,11 +31,10 @@ class Plugin extends Container {
         $this['fileloader'] = $this->share(function($c)
         {
             return new FileLoader(
-                $c,
                 array(
                     'config'    => $c['paths.config'],
                     'resources' => $c['paths.resources'],
-                    )
+                )
             );
         });
 
@@ -54,7 +53,11 @@ class Plugin extends Container {
         // Add the view manager.
         $this['view'] = $this->share(function($c)
         {
-            return new ViewManager($c);
+            $provider = new ViewManager();
+
+            $provider->setContainer($c);
+
+            return $provider;
         });
 
         // Add the config/options loader.
