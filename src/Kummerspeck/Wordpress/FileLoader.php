@@ -7,8 +7,8 @@
  * @version $id$
  */
 
+use Pimple;
 use Symfony\Component\Yaml\Yaml;
-use Kummerspeck\Arr\get_key;
 
 /**
  * Loads file contents.
@@ -20,6 +20,14 @@ use Kummerspeck\Arr\get_key;
 class FileLoader {
 
     /**
+     * Plugin container object.
+     *
+     * @access protected
+     * @var Pimple
+     */
+    protected $_container;
+
+    /**
      * Paths to look for files in.
      *
      * @access protected
@@ -28,14 +36,15 @@ class FileLoader {
     protected $_paths = array();
 
     /**
-     * Constuct object.
+     * Construct object.
      *
      * @access public
      * @param array $paths Array of paths to load files from.
      * @return void
      */
-    public function __construct(array $paths)
+    public function __construct(Pimple $container, array $paths)
     {
+        $this->setContainer($container);
         $this->setPaths($paths);
     }
 
@@ -85,46 +94,52 @@ class FileLoader {
      */
     public function load($file, $extension)
     {
-        $extension = '.' . $extension;
-
-        if ( ! is_file($file . $extension))
-        {
-            // File doesn't exist so throw exception.
-            $c = $this->getContainer();
-
-            throw new \Exception(
-                sprintf(
-                    'File "%s" does not exist in plugin "%s".',
-                    str_replace($c['paths.plugin'], '', $file) . $extension,
-                    $c['plugin.name']
-                )
-            );
-        }
-
         // Load file contents and parse contents based on
-        // file extension.
-        switch (ltrim($extension, '.'))
+        // file extension or make a call if it is a Closure.
+        if ($extension instanceof \Closure)
         {
-            case 'yml':
-                return Yaml::parser($file . $extension);
+            return $extension($file, $c);
+        }
+        else
+        {
+            $extension = '.' . ltrim($extension, '.');
 
-                break;
-            case 'xml':
-                return simplexml_load_file($file . $extension);
+            if ( ! is_file($file . $extension))
+            {
+                // File doesn't exist so throw exception.
+                $c = $this->getContainer();
 
-                break;
-            case 'json':
-                return json_decode(file_get_contents($file . $extension), true);
+                throw new \Exception(
+                    sprintf(
+                        'File "%s" does not exist.',
+                        $file
+                    )
+                );
+            }
 
-                break;
-            case 'php':
-                return include $file . $extension;
+            switch (ltrim($extension, '.'))
+            {
+                case 'yml':
+                    return Yaml::parse($file . $extension);
 
-                break;
-            default:
-                return file_get_contents($file . $extension);
+                    break;
+                case 'xml':
+                    return simplexml_load_file($file . $extension);
 
-                break;
+                    break;
+                case 'json':
+                    return json_decode(file_get_contents($file . $extension), true);
+
+                    break;
+                case 'php':
+                    return include $file . $extension;
+
+                    break;
+                default:
+                    return file_get_contents($file . $extension);
+
+                    break;
+            }
         }
     }
 
@@ -192,10 +207,36 @@ class FileLoader {
     {
         if ($which !== null)
         {
-            return get_key($which, $this->_paths);
+            return \Kummerspeck\Arr\get_key($which, $this->_paths);
         }
 
         return $this->_paths;
+    }
+
+
+    /**
+     * Set container object.
+     *
+     * @access public
+     * @param Pimple $container Plugin container object.
+     * @return $this
+     */
+    public function setContainer(Pimple $container)
+    {
+        $this->_container = $container;
+
+        return $this;
+    }
+
+    /**
+     * Get container object.
+     *
+     * @access public
+     * @return Pimple
+     */
+    public function getContainer()
+    {
+        return $this->_container;
     }
 
 }

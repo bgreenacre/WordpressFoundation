@@ -7,9 +7,7 @@
  * @version $id$
  */
 
-use Kummerspeck\Arr\set_path;
-use Kummerspeck\Arr\unset_path;
-use Kummerspeck\Arr\get_path;
+use Kummerspeck\Arr as Arr;
 
 /**
  * Config class handles all interactions between loading and saving options
@@ -32,6 +30,15 @@ class Config implements \ArrayAccess {
     protected $_data = array();
 
     /**
+     * Contains wordpress option values in the
+     * global scope.
+     *
+     * @access protected
+     * @var array
+     */
+    protected $_options = array();
+
+    /**
      * The delimiter character to use when getting or
      * setting embeded values in the array.
      *
@@ -51,12 +58,12 @@ class Config implements \ArrayAccess {
     protected $_namespace;
 
     /**
-     * Path to where config files exist.
+     * FileLoader object.
      *
      * @access protected
-     * @var string
+     * @var FileLoader
      */
-    protected $_path;
+    protected $_loader;
 
     /**
      * Tracks which top-level config/option values have been
@@ -68,18 +75,35 @@ class Config implements \ArrayAccess {
     protected $_loaded = array();
 
     /**
+     * The file extension the config files are using.
+     *
+     * @access protected
+     * @var string
+     */
+    protected $_extension = 'yml';
+
+    /**
+     * Tracks the key that was loaded by the load
+     * method.
+     *
+     * @access protected
+     * @var string
+     */
+    protected $_lastKeyLoaded;
+
+    /**
      * Initial the object with the path to config files and
      * optionally arguments.
      *
      * @access public
-     * @param string $path Path to where config files are.
+     * @param object $loader    File loader object.
      * @param string $namespace Option namespace.
      * @param string $delimiter Delimiter character for array access.
      * @return void
      */
-    public function __construct($path, $namespace = null, $delimiter = null)
+    public function __construct(FileLoader $loader, $namespace = null, $delimiter = null)
     {
-        $this->setFilePath($path);
+        $this->setFileLoader($loader);
 
         if ($delimiter !== null)
         {
@@ -102,7 +126,7 @@ class Config implements \ArrayAccess {
      */
     public function __destruct()
     {
-        $this->save();
+        //$this->save();
     }
 
     /**
@@ -126,10 +150,13 @@ class Config implements \ArrayAccess {
      *
      * @access public
      * @param  string $key Array index path to load.
-     * @return mixed       Config/Option value.
+     * @return $this
      */
     public function load($key)
     {
+        // Track this key was loaded last
+        $this->_lastKeyLoaded = $key;
+
         // Don't reload the value if it's been loaded before.
         if ($this->loaded($key))
         {
@@ -141,15 +168,15 @@ class Config implements \ArrayAccess {
 
         // If there's a config file path set then
         // let's try and load values from it.
-        if ($filePath = $this->getFilePath())
+        if (($filePath = $this->getFileLoader()->getPaths('config')) && ! $this->loaded($parts[0]))
         {
             $pathParts = $parts;
-            $path = '';
+            $path      = '';
 
             // Loop through the parts until a file is found
             while ($part = array_shift($pathParts))
             {
-                if (is_file($filePath . $path . $part))
+                if (is_file($filePath . $path . $part . '.' . $this->_extension))
                 {
                     // Replace directory characters with the
                     // delimiter character for proper setting
@@ -167,7 +194,7 @@ class Config implements \ArrayAccess {
                     // array index path.
                     $this[$pathKey] = $this->_loadFile(
                         $filePath . $path . $part,
-                        'php'
+                        $this->_extension
                     );
                 }
                 elseif (is_dir($filePath . $path . $part))
@@ -185,17 +212,34 @@ class Config implements \ArrayAccess {
         // to the top-level path parts.
         $optionValue = get_option($this->getNamespace() . $parts[0]);
 
-        if ($optionValue)
+        if ($optionValue !== false)
         {
             // Overwrite any config file values with the value
             // loaded from the options api.
             $this[$parts[0]] = unserialize($optionValue);
+            
+            // Track the loaded values.
+            $this->_loaded[] = $this->getNamespace() . $parts[0];
+
+            return $this;
         }
+        elseif ( ! $this->getNamespace())
+        {
+            $optionValue = get_option($parts[0]);
 
-        // Track the loaded values.
-        $this->_loaded[] = $this->getNamespace() . $parts[0];
+            if ($optionValue !== false)
+            {
+                $this->_options[$parts[0]] = unserialize($optionValue);
 
-        return $this;
+                $this->_loaded[] = $parts[0];
+            }
+
+            return $this;
+        }
+        else
+        {
+            return $this;
+        }
     }
 
     /**
@@ -210,7 +254,13 @@ class Config implements \ArrayAccess {
     {
         $parts = $this->getPathParts($key);
 
-        return (in_array($this->getNamespace() . $parts[0], $this->_loaded));
+        return (
+            isset($parts[0]) &&
+            in_array(
+                $this->getNamespace() . $parts[0],
+                $this->_loaded
+            )
+        );
     }
 
     /**
@@ -223,12 +273,15 @@ class Config implements \ArrayAccess {
     public function loadNamespace($path = '')
     {
         $namespace = rtrim($this->getNamespace(), $this->getDelimiter());
-        $filePath  = $this->getFilePath();
+        $filePath  = $this->getFileLoader()->getPaths('config');
 
-        if ( ! $path && is_file($filePath . $namespace . '.php'))
+        if ( ! $path && is_file($filePath . $namespace . '.' . $this->_extension))
         {
             // Set data array with the namespace config file name
-            $this->_data = $this->_loadFile($filePath . $namespace . $path, 'php');
+            $this->_data = $this->_loadFile(
+                $filePath . $namespace . $path,
+                $this->_extension
+            );
         }
         elseif (is_dir($filePath . $namespace . $path))
         {
@@ -239,7 +292,7 @@ class Config implements \ArrayAccess {
             {
                 $filename = $file->getFilename();
 
-                if ($filename[0] === '.' OR $filename[strlen($filename)-1] === '~')
+                if ($filename[0] === '.' || $filename[strlen($filename)-1] === '~')
                 {
                     // Skip all hidden files and UNIX backup files
                     continue;
@@ -254,10 +307,14 @@ class Config implements \ArrayAccess {
 
                     $this->loadNamespace($path . $filename . DIRECTORY_SEPARATOR);
                 }
-                elseif ($file->getExtension() === 'php')
+                elseif ($file->getExtension() === $this->_extension)
                 {
-                    // Found a php config file so load it's contents
-                    $data    = $this->_loadFile($filePath . $namespace . $path . $filename, 'php');
+                    // Found a config file so load it's contents
+                    $data = $this->_loadFile(
+                        $filePath . $namespace . $path . $filename,
+                        $this->_extension
+                    );
+                    
                     $pathKey = $this->getNamespace();
 
                     if ($path)
@@ -267,7 +324,7 @@ class Config implements \ArrayAccess {
                         $pathKey .= str_replace(
                             DIRECTORY_SEPARATOR,
                             $this->getDelimiter(),
-                            $path
+                            DIRECTORY_SEPARATOR . trim($path, DIRECTORY_SEPARATOR)
                         );
 
                         rtrim($pathKey, $this->getDelimiter());
@@ -277,6 +334,8 @@ class Config implements \ArrayAccess {
                 }
             }
         }
+
+        return $this;
     }
 
     /**
@@ -289,7 +348,7 @@ class Config implements \ArrayAccess {
      */
     private function _loadFile($file, $extension)
     {
-        return include $file . '.' . $extension;
+        return $this->_loader->load($file, $extension);
     }
 
     /**
@@ -341,11 +400,14 @@ class Config implements \ArrayAccess {
      * Get the namespace.
      *
      * @access public
+     * @param  bool   $withDelimiter True returns with delimiter appended else no delimiter.
      * @return string Object namespace
      */
-    public function getNamespace()
+    public function getNamespace($withDelimiter = true)
     {
-        return $this->_namespace;
+        return ($withDelimiter === true)
+            ? $this->_namespace
+            : trim($this->_namespace, $this->_delimiter);
     }
 
     /**
@@ -374,45 +436,71 @@ class Config implements \ArrayAccess {
     }
 
     /**
-     * Set file path where config files are located.
+     * Set the file extension.
      *
      * @access public
-     * @param string $path
+     * @param string $extension The file extension.
      * @return $this
-     * @throws InvalidArgumentException If invalid path is given.
      */
-    public function setFilePath($path)
+    public function setFileExtension($extension)
     {
-        // Validate the path by resolving it.
-        $resolvedPath = realpath($path);
-
-        // Throw exception if it's not a valid
-        // path on the system.
-        if ( ! $path)
-        {
-            throw new \InvalidArgumentException(
-                sprintf(
-                    'Config path "%s" does not exist',
-                    $path
-                )
-            );
-        }
-
-        // Append a directory separator and set the property.
-        $this->_path = $resolvedPath . DIRECTORY_SEPARATOR;
+        $this->_extension = $extension;
 
         return $this;
     }
 
     /**
-     * Get the file path.
+     * Get the file extension.
      *
      * @access public
-     * @return string File path.
+     * @return string File extension.
      */
-    public function getFilePath()
+    public function getFileExtension()
     {
-        return $this->_path;
+        return $this->_extension;
+    }
+
+    /**
+     * Set file path where config files are located.
+     *
+     * @access public
+     * @param  FileLoader
+     * @return $this
+     */
+    public function setFileLoader(FileLoader $loader)
+    {
+        $this->_loader = $loader;
+
+        return $this;
+    }
+
+    /**
+     * Get the file loader.
+     *
+     * @access public
+     * @return FileLoader.
+     */
+    public function getFileLoader()
+    {
+        return $this->_loader;
+    }
+
+    /**
+     * Return the entire data or a key.
+     *
+     * @access public
+     * @return array  Array contents
+     */
+    public function asArray($key = null)
+    {
+        if ($key === null)
+        {
+            $key = $this->_lastKeyLoaded;
+        }
+
+        return ($key === true)
+            ? (array) $this->_data
+            : (array) $this[$key];
     }
 
     /**
@@ -425,7 +513,7 @@ class Config implements \ArrayAccess {
      */
     public function offsetSet($key, $value)
     {
-        set_path($this->_data, $key, $value, $this->getDelimiter());
+        Arr\set_path($this->_data, $key, $value, $this->getDelimiter());
     }
 
     /**
@@ -437,7 +525,17 @@ class Config implements \ArrayAccess {
      */
     public function offsetGet($key)
     {
-        return get_path($key, $this->_path, null, $this->getDelimiter());
+        if ( ! $this->loaded($key))
+        {
+            $this->load($key);
+        }
+
+        return Arr\get_path(
+            $key,
+            $this->_data,
+            Arr\get_key($key, $this->_options, null),
+            $this->getDelimiter()
+        );
     }
 
     /**
@@ -449,7 +547,7 @@ class Config implements \ArrayAccess {
      */
     public function offsetUnset($key)
     {
-        unset_path($this->_data, $key, $this->getDelimiter());
+        Arr\unset_path($this->_data, $key, $this->getDelimiter());
     }
 
     /**
@@ -462,10 +560,10 @@ class Config implements \ArrayAccess {
     public function offsetExists($key)
     {
         return (
-            get_path(
+            Arr\get_path(
                 $key,
-                $this->_path,
-                null,
+                $this->_data,
+                Arr\get_key($key, $this->_data, null),
                 $this->getDelimiter()
             ) !== null
         );
