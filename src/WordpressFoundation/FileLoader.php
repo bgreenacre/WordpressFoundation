@@ -207,7 +207,7 @@ class FileLoader {
     {
         if ($which !== null)
         {
-            return \Kummerspeck\Arr\get_key($which, $this->_paths);
+            return array_get($this->_paths, $which);
         }
 
         return $this->_paths;

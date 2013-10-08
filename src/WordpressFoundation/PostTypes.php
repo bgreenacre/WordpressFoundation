@@ -61,9 +61,9 @@ class PostTypes {
         foreach ($types as $type)
         {
             $this->addType(
-                Arr\get_key('name', $type),
-                Arr\get_key('args', $type),
-                Arr\get_key('sub_menus', $type)
+                array_get($type, 'name'),
+                array_get($type, 'args'),
+                array_get($type, 'sub_menus')
             );
         }
 

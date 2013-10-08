@@ -8,7 +8,6 @@
  */
 
 use Pimple;
-use Kummerspeck\Arr as Arr;
 
 /**
  * Config class handles all interactions between loading and saving options

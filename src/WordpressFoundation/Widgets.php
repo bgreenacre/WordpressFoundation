@@ -8,7 +8,6 @@
  */
 
 use Pimple;
-use Kummerspeck\Arr as Arr;
 
 /**
  * Provider class used to add widgets to wordpress.
@@ -44,25 +43,25 @@ class Widgets {
         foreach ($this->_widgets as $widgetDefinition)
         {
             wp_register_sidebar_widget(
-                Arr\get_key('id', $widgetDefinition),
-                Arr\get_key('name', $widgetDefinition),
+                array_get($widgetDefinition, 'id'),
+                array_get($widgetDefinition, 'name'),
                 $this->_container['controller'](
-                    Arr\get_key('frontController', $widgetDefinition)
+                    array_get($widgetDefinition, 'frontController')
                 ),
-                Arr\get_key('widgetOptions', $widgetDefinition, array())
+                array_get($widgetDefinition, 'widgetOptions', array())
             );
 
             wp_register_widget_control(
-                Arr\get_key('id', $widgetDefinition),
-                Arr\get_key('name', $widgetDefinition),
+                array_get($widgetDefinition, 'id'),
+                array_get($widgetDefinition, 'name'),
                 $this->_container['controller'](
-                    Arr\get_key(
-                        'formController',
+                    array_get(
                         $widgetDefinition,
+                        'formController',
                         array($this, 'form')
                     )
                 ),
-                Arr\get_key('controlOptions', $widgetDefinition, array())
+                array_get($widgetDefinition, 'controlOptions', array())
             );
         }
     }

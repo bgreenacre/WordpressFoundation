@@ -7,8 +7,6 @@
  * @version $id$
  */
 
-use Kummerspeck\Arr as Arr;
-
 /**
  * Input class handles any global inputs from the request.
  * 
@@ -59,25 +57,25 @@ class Input {
      */
     public function __construct(array $data = array())
     {
-        if ($post = Arr\get_key('post', $data))
+        if ($post = array_get($data, 'post'))
         {
             // Set post array
             $this->setPost($post);
         }
 
-        if ($query = Arr\get_key('query', $data))
+        if ($query = array_get($data, 'query'))
         {
             // Set query array
             $this->setQuery($query);
         }
 
-        if ($cookies = Arr\get_key('cookies', $data))
+        if ($cookies = array_get($data, 'cookies'))
         {
             // Set cookie array
             $this->setCookies($cookies);
         }
 
-        if ($files = Arr\get_key('files', $data))
+        if ($files = array_get($data, 'files'))
         {
             // Set files array
             $this->setFiles($files);
@@ -144,7 +142,7 @@ class Input {
             return $this->_post;
         }
 
-        return get_key($key, $this->_post, $default);
+        return array_get($this->_post, $key, $default);
     }
 
     /**
@@ -175,7 +173,7 @@ class Input {
             return $this->_query;
         }
 
-        return get_key($key, $this->_query, $default);
+        return array_get($this->_query, $key, $default);
     }
 
     /**
@@ -206,7 +204,7 @@ class Input {
             return $this->_cookies;
         }
 
-        return get_key($key, $this->_cookies, $default);
+        return array_get($this->_cookies, $key, $default);
     }
 
     /**

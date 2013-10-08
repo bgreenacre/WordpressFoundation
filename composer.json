@@ -10,12 +10,12 @@
         }
     ],
     "autoload": {
-        "psr-0": {"WordpressFoundation": "src/"},
-        "files": ["src/functions/Arr.php"]
+        "psr-0": {"WordpressFoundation": "src/"}
     },
     "require": {
     	"php": ">=5.3.3",
         "symfony/yaml": "2.2.*@dev",
-        "pimple/pimple": "dev-master"
+        "pimple/pimple": "dev-master",
+        "illuminate/support": "4.0.*"
     }
 }

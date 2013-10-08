@@ -8,7 +8,6 @@
  */
 
 use Pimple;
-use Kummerspeck\Arr as Arr;
 
 /**
  * Config class handles all interactions between loading and saving options
@@ -119,15 +118,17 @@ class Assets {
     {
         foreach ($assets as $key => $asset)
         {
-            $asset['enqueue'] = (bool) Arr\get_key('enqueue', $asset, true);
-            $asset['context'] = Arr\get_key('context', $asset, 'front');
-            $asset['type']    = Arr\get_key(
-                'type',
-                $asset,
-                ( ($pos = strrpos($asset['uri'], '.')) > 0)
-                    ? strtolower(substr($asset['uri'], $pos + 1))
-                    : null
-            );
+            $asset['enqueue'] = (bool) array_get($asset, 'enqueue', true);
+            $asset['context'] = array_get($asset, 'context', 'front');
+
+            $defaultType = null;
+
+            if ($pos = strrpos($asset['uri'], '.'))
+            {
+                $defaultType = strtolower(substr($asset['uri'], $pos + 1));
+            }
+
+            $asset['type'] = array_get($asset, 'type', $defaultType);
 
             switch($asset['context'])
             {
@@ -226,7 +227,7 @@ class Assets {
     {
         foreach ($this->_frontAssets as $asset)
         {
-            if (Arr\get_key('enqueue', $asset) == true)
+            if (array_get($asset, 'enqueue') == true)
             {
                 $this->_enqueueAsset($asset['handle'], $asset['type']);
             }
@@ -243,7 +244,7 @@ class Assets {
     {
         foreach ($this->_loginAssets as $asset)
         {
-            if (Arr\get_key('enqueue', $asset) == true)
+            if (array_get($asset, 'enqueue') == true)
             {
                 $this->_enqueueAsset($asset['handle'], $asset['type']);
             }
@@ -260,7 +261,7 @@ class Assets {
     {
         foreach ($this->_adminAssets as $asset)
         {
-            if (Arr\get_key('enqueue', $asset) == true)
+            if (array_get($asset, 'enqueue') == true)
             {
                 $this->_enqueueAsset($asset['handle'], $asset['type']);
             }
@@ -324,9 +325,9 @@ class Assets {
             wp_register_style(
                 $asset['handle'],
                 $c['url']->asset($asset['uri']),
-                Arr\get_key('depends', $asset, array()),
-                Arr\get_key('version', $asset),
-                Arr\get_key('in_footer', $asset, false)
+                array_get($asset, 'depends', array()),
+                array_get($asset, 'version'),
+                array_get($asset, 'in_footer', false)
             );
         }
         elseif ($type == 'js')
@@ -334,9 +335,9 @@ class Assets {
             wp_register_script(
                 $asset['handle'],
                 $c['url']->asset($asset['uri']),
-                Arr\get_key('depends', $asset, array()),
-                Arr\get_key('version', $asset),
-                Arr\get_key('in_footer', $asset, false)
+                array_get($asset, 'depends', array()),
+                array_get($asset, 'version'),
+                array_get($asset, 'in_footer', false)
             );
         }
     }
