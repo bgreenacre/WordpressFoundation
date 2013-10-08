@@ -1,8 +1,8 @@
-<?php namespace Kummerspeck\Wordpress;
+<?php namespace WordpressFoundation;
 /**
- * Kummerspeck Wordpress Utilities
+ * WordpressFoundation Utilities
  *
- * @package Kummerspeck/WordpressFoundation
+ * @package WordpressFoundation
  * @author Brian Greenacre <bgreenacre42@gmail.com>
  * @version $id$
  */
@@ -10,7 +10,7 @@
 /**
  * Wrapper for the [transient api](https://codex.wordpress.org/Transients_API)
  * 
- * @package Kummerspeck/WordpressFoundation
+ * @package WordpressFoundation
  * @author Brian Greenacre <bgreenacre42@gmail.com>
  * @version $id$
  */
