@@ -21,8 +21,6 @@ use ArrayAccess;
  */
 class Config implements ArrayAccess {
 
-    use WordpressFoundation\Traits\ContainerAware;
-
     /**
      * Holds the array.
      *

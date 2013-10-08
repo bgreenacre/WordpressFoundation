@@ -7,6 +7,7 @@
  * @version $id$
  */
 
+use Exception;
 use Pimple;
 use Symfony\Component\Yaml\Yaml;
 
@@ -20,20 +21,12 @@ use Symfony\Component\Yaml\Yaml;
 class FileLoader {
 
     /**
-     * Plugin container object.
-     *
-     * @access protected
-     * @var Pimple
-     */
-    protected $_container;
-
-    /**
      * Paths to look for files in.
      *
      * @access protected
      * @var array
      */
-    protected $_paths = array();
+    protected $paths = array();
 
     /**
      * Construct object.
@@ -42,9 +35,8 @@ class FileLoader {
      * @param array $paths Array of paths to load files from.
      * @return void
      */
-    public function __construct(Pimple $container, array $paths)
+    public function __construct(array $paths)
     {
-        $this->setContainer($container);
         $this->setPaths($paths);
     }
 
@@ -71,7 +63,7 @@ class FileLoader {
                 // Try to load the file with path.
                 return $this->load($paths[$i] . $file, $extension);
             }
-            catch (\Exception $e)
+            catch (Exception $e)
             {
                 if ($i == ($pathsCount - 1) )
                 {
@@ -107,9 +99,7 @@ class FileLoader {
             if ( ! is_file($file . $extension))
             {
                 // File doesn't exist so throw exception.
-                $c = $this->getContainer();
-
-                throw new \Exception(
+                throw new Exception(
                     sprintf(
                         'File "%s" does not exist.',
                         $file
@@ -119,20 +109,20 @@ class FileLoader {
 
             switch (ltrim($extension, '.'))
             {
-                case 'yml':
-                    return Yaml::parse($file . $extension);
-
-                    break;
-                case 'xml':
-                    return simplexml_load_file($file . $extension);
+                case 'php':
+                    return include $file . $extension;
 
                     break;
                 case 'json':
                     return json_decode(file_get_contents($file . $extension), true);
 
                     break;
-                case 'php':
-                    return include $file . $extension;
+                case 'yml':
+                    return Yaml::parse($file . $extension);
+
+                    break;
+                case 'xml':
+                    return simplexml_load_file($file . $extension);
 
                     break;
                 default:
@@ -156,10 +146,10 @@ class FileLoader {
 
         if (is_array($paths))
         {
-            $this->loadByPaths($paths, $file, 'yml');
+            $this->loadByPaths($paths, $file, 'php');
         }
 
-        return $this->load($paths . $file, 'yml');
+        return $this->load($paths . $file, 'php');
     }
 
     /**
@@ -191,7 +181,7 @@ class FileLoader {
      */
     public function setPaths(array $paths)
     {
-        $this->_paths = $paths;
+        $this->paths = $paths;
 
         return $this;
     }
@@ -207,36 +197,10 @@ class FileLoader {
     {
         if ($which !== null)
         {
-            return array_get($this->_paths, $which);
+            return array_get($this->paths, $which);
         }
 
-        return $this->_paths;
-    }
-
-
-    /**
-     * Set container object.
-     *
-     * @access public
-     * @param Pimple $container Plugin container object.
-     * @return $this
-     */
-    public function setContainer(Pimple $container)
-    {
-        $this->_container = $container;
-
-        return $this;
-    }
-
-    /**
-     * Get container object.
-     *
-     * @access public
-     * @return Pimple
-     */
-    public function getContainer()
-    {
-        return $this->_container;
+        return $this->paths;
     }
 
 }
