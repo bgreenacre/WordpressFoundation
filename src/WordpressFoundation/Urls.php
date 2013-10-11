@@ -19,7 +19,7 @@
  */
 class Urls {
 
-    use WordpressFoundation\Traits\ContainerAware;
+    use \WordpressFoundation\Traits\ContainerAware;
 
     /**
      * Generate a url for an asset.

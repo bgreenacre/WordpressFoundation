@@ -19,7 +19,7 @@
  */
 class Assets {
 
-    use WordpressFoundation\Traits\ContainerAware;
+    use \WordpressFoundation\Traits\ContainerAware;
 
     /**
      * Array of assets to register and optionally

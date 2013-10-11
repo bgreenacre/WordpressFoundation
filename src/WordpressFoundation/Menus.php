@@ -15,7 +15,7 @@
  */
 class Menus {
 
-    use WordpressFoundation\Traits\ContainerAware;
+    use \WordpressFoundation\Traits\ContainerAware;
 
     /**
      * Array of menus to add in wordpress.

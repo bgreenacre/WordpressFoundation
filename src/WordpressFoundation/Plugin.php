@@ -16,7 +16,7 @@ use Pimple;
  * @author Brian Greenacre <bgreenacre42@gmail.com>
  * @version $id$
  */
-class Plugin extends Container {
+class Plugin extends Pimple {
 
     /**
      * Bootstrap the plugin by loading/setting
@@ -123,11 +123,9 @@ class Plugin extends Container {
         {
             if ($controller)
             {
-                $c = $this->_container;
-
                 $callback = function() use ($controller, $c)
                 {
-                    echo $c['controller.resolver']($controller, func_get_args());
+                    echo $this['controller.resolver']($controller, func_get_args());
                 };
             }
             else

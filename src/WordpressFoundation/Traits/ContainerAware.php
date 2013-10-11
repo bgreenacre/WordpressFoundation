@@ -46,17 +46,17 @@ trait ContainerAware {
      */
     public function getProvider($provider)
     {
-        if ( ! isset($this[$provider]))
+        if ( ! isset($this->container[$provider]))
         {
             throw new InvalidArgumentException(
                 sprintf(
                     'WordpressFoundation provider "%s" does not exist.',
                     $provider
                 )
-            )
+            );
         }
 
-        return $this[$provider];
+        return $this->container[$provider];
     }
 
 }

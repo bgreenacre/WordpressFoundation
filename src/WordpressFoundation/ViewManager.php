@@ -18,7 +18,7 @@ use Exception;
  */
 class ViewManager {
 
-    use WordpressFoundation\Traits\ContainerAware;
+    use \WordpressFoundation\Traits\ContainerAware;
 
     /**
      * Load a view and render it.

@@ -19,7 +19,7 @@ use DirectoryIterator;
  */
 class Widgets {
 
-    use WordpressFoundation\Traits\ContainerAware;
+    use \WordpressFoundation\Traits\ContainerAware;
 
     public function register()
     {

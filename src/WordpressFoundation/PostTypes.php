@@ -15,7 +15,7 @@
  */
 class PostTypes {
 
-    use WordpressFoundation\Traits\ContainerAware;
+    use \WordpressFoundation\Traits\ContainerAware;
 
     /**
      * Holds all post types.
@@ -46,7 +46,17 @@ class PostTypes {
 
         if ($subMenus !== null)
         {
-            $this->getProvider('menus')->add($subMenus);
+            if (is_numeric(key($subMenus)))
+            {
+                foreach ($subMenus as $subMenu)
+                {
+                    $this->getProvider('menus')->add($subMenu);
+                }
+            }
+            else
+            {
+                $this->getProvider('menus')->add($subMenus);
+            }
         }
 
         return $this;

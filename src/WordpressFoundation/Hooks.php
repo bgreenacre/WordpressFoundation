@@ -19,7 +19,7 @@ use InvalidArgumentException;
  */
 class Hooks {
 
-    use WordpressFoundation\Traits\ContainerAware;
+    use \WordpressFoundation\Traits\ContainerAware;
 
 	/**
 	 * Default priority to set on hook.
