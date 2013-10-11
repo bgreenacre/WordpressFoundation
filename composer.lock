@@ -3,7 +3,7 @@
         "This file locks the dependencies of your project to a known state",
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file"
     ],
-    "hash": "a5e81d6dc9da327c04cdfdec2e0f1c09",
+    "hash": "f80a68a5d72a816ed9e81db396ef215c",
     "packages": [
         {
             "name": "illuminate/support",
@@ -109,12 +109,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/Yaml.git",
-                "reference": "bb697b6617b90c91b2a65d24ce32035afe5e3418"
+                "reference": "a3e81e895bde9964f0956e747badf2890aed5c05"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/Yaml/zipball/bb697b6617b90c91b2a65d24ce32035afe5e3418",
-                "reference": "bb697b6617b90c91b2a65d24ce32035afe5e3418",
+                "url": "https://api.github.com/repos/symfony/Yaml/zipball/a3e81e895bde9964f0956e747badf2890aed5c05",
+                "reference": "a3e81e895bde9964f0956e747badf2890aed5c05",
                 "shasum": ""
             },
             "require": {
@@ -147,7 +147,7 @@
             ],
             "description": "Symfony Yaml Component",
             "homepage": "http://symfony.com",
-            "time": "2013-09-22 17:30:19"
+            "time": "2013-10-10 22:23:27"
         }
     ],
     "packages-dev": [
