@@ -96,6 +96,15 @@ class Plugin extends Pimple {
             return $provider;
         });
 
+        $this['taxonomies'] = $this->share(function($c)
+        {
+            $provider = new Taxonomies($c['config']->load('taxonomies')->asArray());
+
+            $provider->setContainer($c);
+
+            return $provider;
+        });
+
         $this['widgets'] = $this->share(function($c)
         {
             return new Widgets($c);
@@ -187,6 +196,7 @@ class Plugin extends Pimple {
         $this['hooks']->addAction('init', function($c)
         {
             $c['post.types']->register();
+            $c['taxonomies']->register();
         }, 2);
 
         $this['hooks']->addAction('admin_menu', function($c)
