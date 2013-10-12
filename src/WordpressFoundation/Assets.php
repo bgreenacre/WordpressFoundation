@@ -309,7 +309,7 @@ class Assets extends Provider {
         {
             wp_register_style(
                 $asset['handle'],
-                $this->getProvider('url')->asset($asset['uri']),
+                $this->getProvider('urls')->asset($asset['uri']),
                 array_get($asset, 'depends', array()),
                 array_get($asset, 'version'),
                 array_get($asset, 'in_footer', false)
@@ -319,7 +319,7 @@ class Assets extends Provider {
         {
             wp_register_script(
                 $asset['handle'],
-                $this->getProvider('url')->asset($asset['uri']),
+                $this->getProvider('urls')->asset($asset['uri']),
                 array_get($asset, 'depends', array()),
                 array_get($asset, 'version'),
                 array_get($asset, 'in_footer', false)
