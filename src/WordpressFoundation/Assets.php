@@ -7,6 +7,8 @@
  * @version $id$
  */
 
+use Pimple;
+
 /**
  * Config class handles all interactions between loading and saving options
  * to the [wordpress options api](https://codex.wordpress.org/Options_API).
@@ -45,6 +47,13 @@ class Assets extends Provider {
      * @var array
      */
     protected $frontAssets = array();
+
+    public function __construct(Pimple $container, array $assets)
+    {
+        parent::__construct($container);
+
+        $this->load($assets);
+    }
 
     /**
      * Add in the actions to register and
@@ -143,7 +152,7 @@ class Assets extends Provider {
             {
                 foreach ( (array) $asset['replaces'] as $replace)
                 {
-                    $this->deregisterAsset($replace, $asset['type']);
+                    $this->unregisterAsset($replace, $asset['type']);
                 }
             }
 
@@ -165,7 +174,7 @@ class Assets extends Provider {
             {
                 foreach ( (array) $asset['replaces'] as $replace)
                 {
-                    $this->deregisterAsset($replace, $asset['type']);
+                    $this->unregisterAsset($replace, $asset['type']);
                 }
             }
 
@@ -187,7 +196,7 @@ class Assets extends Provider {
             {
                 foreach ( (array) $asset['replaces'] as $replace)
                 {
-                    $this->deregisterAsset($replace, $asset['type']);
+                    $this->unregisterAsset($replace, $asset['type']);
                 }
             }
 
@@ -274,7 +283,7 @@ class Assets extends Provider {
      * @param  string $type Style or Javascript.
      * @return void
      */
-    protected function deregisterAsset($name, $type)
+    protected function unregisterAsset($name, $type)
     {
         if ($type == 'css')
         {

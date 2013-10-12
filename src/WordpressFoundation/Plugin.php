@@ -126,7 +126,7 @@ class Plugin extends Pimple {
 
         $this['assets'] = $this->share(function()
         {
-            return new Assets($this);
+            return new Assets($this, $this['config']->load('assets')->asArray());
         });
 
         $this['urls'] = $this->share(function()
@@ -198,6 +198,8 @@ class Plugin extends Pimple {
      */
     public function run()
     {
+        $this['assets']->register();
+
         $this['hooks']->activateHook(function($c)
         {
             flush_rewrite_rules();
