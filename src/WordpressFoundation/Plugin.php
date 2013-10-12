@@ -59,9 +59,10 @@ class Plugin extends Pimple {
     public function bootstrap()
     {
         // Add the plugin file loader.
-        $this['fileloader'] = $this->share(function($c)
+        $this['fileloader'] = $this->share(function()
         {
             return new FileLoader(
+                $this,
                 array(
                     'config'    => $this['paths.config'],
                     'resources' => $this['paths.resources'],
@@ -70,9 +71,10 @@ class Plugin extends Pimple {
         });
 
         // Add the input class that handles GLOBAL inputs.
-        $this['input'] = $this->share(function($c)
+        $this['input'] = $this->share(function()
         {
             return new Input(
+                $this,
                 array(
                     'post'    => $_POST,
                     'query'   => $_GET,
@@ -82,81 +84,54 @@ class Plugin extends Pimple {
         });
 
         // Add the view manager.
-        $this['view'] = $this->share(function($c)
+        $this['view'] = $this->share(function()
         {
-            $provider = new ViewManager();
-
-            $provider->setContainer($this);
-
-            return $provider;
+            return new ViewManager($this);
         });
 
         // Add the config/options loader.
-        $this['config'] = $this->share(function($c)
+        $this['config'] = $this->share(function()
         {
             return new Config(
+                $this,
                 $this['fileloader'],
                 (isset($this['plugin.slug'])) ? $this['plugin.slug'] : null
             );
         });
 
-        $this['hooks'] = $this->share(function($c)
+        $this['hooks'] = $this->share(function()
         {
-            $provider = new Hooks();
-
-            $provider->setContainer($this);
-
-            return $provider;
+            return new Hooks($this);
         });
 
-        $this['menus'] = $this->share(function($c)
+        $this['menus'] = $this->share(function()
         {
-            $provider = new Menus($this['config']->load('menus')->asArray());
-
-            $provider->setContainer($this);
-
-            return $provider;
+            return new Menus($this, $this['config']->load('menus')->asArray());
         });
 
-        $this['post.types'] = $this->share(function($c)
+        $this['post.types'] = $this->share(function()
         {
-            $provider = new PostTypes($this['config']->load('post.types')->asArray());
-
-            $provider->setContainer($this);
-
-            return $provider;
+            return new PostTypes($this, $this['config']->load('post.types')->asArray());
         });
 
-        $this['taxonomies'] = $this->share(function($c)
+        $this['taxonomies'] = $this->share(function()
         {
-            $provider = new Taxonomies($this['config']->load('taxonomies')->asArray());
-
-            $provider->setContainer($this);
-
-            return $provider;
+            return new Taxonomies($this, $this['config']->load('taxonomies')->asArray());
         });
 
-        $this['widgets'] = $this->share(function($c)
+        $this['widgets'] = $this->share(function()
         {
-            return new Widgets($c);
+            return new Widgets($this);
         });
 
-        $this['assets'] = $this->share(function($c)
+        $this['assets'] = $this->share(function()
         {
-            $provider = new Assets();
-
-            $provider->setContainer($this);
-
-            return $provider;
+            return new Assets($this);
         });
 
-        $this['urls'] = $this->share(function($c)
+        $this['urls'] = $this->share(function()
         {
-            $provider = new Urls();
-
-            $provider->setContainer($this);
-
-            return $provider;
+            return new Urls($this);
         });
 
         $this['controller'] = $this->protect(function($controller)
@@ -188,14 +163,28 @@ class Plugin extends Pimple {
                 $action = 'indexAction';
             }
 
-            $controllerObject = new $controller();
+            $controllerObject = new $controller($this);
 
-            $controllerObject->setContainer($this);
+            switch (count($args))
+            {
+                case 0:
+                    return $controllerObject->$action();
 
-            return call_user_func_array(
-                array($controllerObject, $action),
-                $args
-            );
+                case 1:
+                    return $controllerObject->$action($args[0]);
+
+                case 2:
+                    return $controllerObject->$action($args[0], $args[1]);
+
+                case 3:
+                    return $controllerObject->$action($args[0], $args[1], $args[2]);
+
+                case 4:
+                    return $controllerObject->$action($args[0], $args[1], $args[2], $args[3]);
+
+                default:
+                    return call_user_func_array(array($controllerObject, $action), $args);
+            }
         });
 
         return $this;

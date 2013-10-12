@@ -7,15 +7,15 @@
  * @version $id$
  */
 
+use Pimple;
+
 /**
  *
  * @package WordpressFoundation
  * @author Brian Greenacre <bgreenacre42@gmail.com>
  * @version $id$
  */
-class Menus {
-
-    use \WordpressFoundation\Traits\ContainerAware;
+class Menus extends Provider {
 
     /**
      * Array of menus to add in wordpress.
@@ -29,11 +29,14 @@ class Menus {
      * Initialize and add an array of menus.
      *
      * @access public
+     * @param Pimple $container Plugin container object.
      * @param array  $menus     Array of menus.
      * @return void
      */
-    public function __construct(array $menus = null)
+    public function __construct(Pimple $container, array $menus = null)
     {
+        parent::__construct($container);
+
         if ($menus !== null)
         {
             foreach ($menus as $menuDefinition)

@@ -7,6 +7,8 @@
  * @version $id$
  */
 
+use Pimple;
+
 /**
  * Input class handles any global inputs from the request.
  * 
@@ -14,7 +16,7 @@
  * @author Brian Greenacre <bgreenacre42@gmail.com>
  * @version $id$
  */
-class Input {
+class Input extends Provider {
 
     /**
      * $post array
@@ -52,11 +54,14 @@ class Input {
      * Optionally set the data arrays on object instantiation.
      *
      * @access public
-     * @param array $data Associative data array
+     * @param Pimple $container Plugin container object.
+     * @param array  $data      Associative data array
      * @return void
      */
-    public function __construct(array $data = array())
+    public function __construct(Pimple $container, array $data = array())
     {
+        parent::__construct($container);
+
         if ($post = array_get($data, 'post'))
         {
             // Set post array

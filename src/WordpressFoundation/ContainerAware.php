@@ -1,9 +1,16 @@
-<?php namespace WordpressFoundation\Traits;
+<?php namespace WordpressFoundation;
+/**
+ * WordpressFoundation Utilities
+ *
+ * @package WordpressFoundation
+ * @author Brian Greenacre <bgreenacre42@gmail.com>
+ * @version $id$
+ */
 
-use Pimple;
 use InvalidArgumentException;
+use Pimple;
 
-trait ContainerAware {
+class ContainerAware {
 
     /**
      * Plugin container object.
@@ -12,6 +19,16 @@ trait ContainerAware {
      * @var Pimple
      */
     protected $containter;
+
+    /**
+     * Set the container object.
+     *
+     * @param Pimple $container [description]
+     */
+    public function __construct(Pimple $container)
+    {
+        $this->container = $container;
+    }
 
     /**
      * Set container object.
@@ -49,7 +66,6 @@ trait ContainerAware {
     {
         if ( ! isset($this->container[$provider]))
         {
-            var_dump($this->container);
             throw new InvalidArgumentException(
                 sprintf(
                     'WordpressFoundation provider "%s" does not exist.',

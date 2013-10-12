@@ -7,15 +7,15 @@
  * @version $id$
  */
 
+use Pimple;
+
 /**
  *
  * @package WordpressFoundation
  * @author Brian Greenacre <bgreenacre42@gmail.com>
  * @version $id$
  */
-class PostTypes {
-
-    use \WordpressFoundation\Traits\ContainerAware;
+class PostTypes extends Provider {
 
     /**
      * Holds all post types.
@@ -25,8 +25,16 @@ class PostTypes {
      */
     protected $types = array();
 
-    public function __construct(array $types)
+    /**
+     * Set types array.
+     * 
+     * @param Pimple $container Plugin container object.
+     * @param array  $types     Array of wordpress post types.
+     */
+    public function __construct(Pimple $container, array $types)
     {
+        parent::__construct($container);
+
         $this->setTypes($types);
     }
 

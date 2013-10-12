@@ -7,6 +7,7 @@
  * @version $id$
  */
 
+use Pimple;
 use ArrayAccess;
 use DirectoryIterator;
 
@@ -20,7 +21,7 @@ use DirectoryIterator;
  * @author Brian Greenacre <bgreenacre42@gmail.com>
  * @version $id$
  */
-class Config implements ArrayAccess {
+class Config extends Provider implements ArrayAccess {
 
     /**
      * Holds the array.
@@ -88,12 +89,15 @@ class Config implements ArrayAccess {
      * optionally arguments.
      *
      * @access public
+     * @param Pimple $container Plugin container object.
      * @param object $loader    File loader object.
      * @param string $namespace Option namespace.
      * @return void
      */
-    public function __construct(FileLoader $loader, $namespace = null)
+    public function __construct(Pimple $container, FileLoader $loader, $namespace = null)
     {
+        parent::__construct($container);
+
         $this->setFileLoader($loader);
 
         if ($namespace !== null)

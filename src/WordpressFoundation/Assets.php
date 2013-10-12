@@ -17,9 +17,7 @@
  * @author Brian Greenacre <bgreenacre42@gmail.com>
  * @version $id$
  */
-class Assets {
-
-    use \WordpressFoundation\Traits\ContainerAware;
+class Assets extends Provider {
 
     /**
      * Array of assets to register and optionally
