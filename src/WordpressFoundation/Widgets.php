@@ -17,9 +17,7 @@ use DirectoryIterator;
  * @author Brian Greenacre <bgreenacre42@gmail.com>
  * @version $id$
  */
-class Widgets {
-
-    use \WordpressFoundation\Traits\ContainerAware;
+class Widgets extends Provider {
 
     public function register()
     {

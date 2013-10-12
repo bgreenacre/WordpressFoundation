@@ -7,20 +7,22 @@
  * @version $id$
  */
 
+use Pimple;
+
 /**
  *
  * @package WordpressFoundation
  * @author Brian Greenacre <bgreenacre42@gmail.com>
  * @version $id$
  */
-class Taxonomies {
-
-    use \WordpressFoundation\Traits\ContainerAware;
+class Taxonomies extends Provider {
 
     protected $taxonomies = array();
 
-    public function __construct(array $taxonomies)
+    public function __construct(Pimple $container, array $taxonomies)
     {
+        parent::__construct($container);
+
         $this->setTaxonomies($taxonomies);
     }
 

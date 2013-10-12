@@ -7,6 +7,7 @@
  * @version $id$
  */
 
+use Pimple;
 use InvalidArgumentException;
 
 /**
@@ -16,7 +17,7 @@ use InvalidArgumentException;
  * @author Brian Greenacre <bgreenacre42@gmail.com>
  * @version $id$
  */
-class Cache {
+class Cache extends Provider {
 
 	/**
 	 * Default length of time for the cached values to live.
@@ -30,11 +31,14 @@ class Cache {
 	 * Set the default TTL variable in the constructor.
 	 *
 	 * @access public
+	 * @param  Pimple  $container  Container object.
 	 * @param  integer $defaultTTL TTL to default on.
 	 * @return void
 	 */
-	public function __construct($defaultTTL = null)
+	public function __construct(Pimple $container, $defaultTTL = null)
 	{
+		parent::__construct($container);
+
 		if ($defaultTTL === null)
 		{
 			// Default to a half hour length in seconds.

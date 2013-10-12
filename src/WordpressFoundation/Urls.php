@@ -17,9 +17,7 @@
  * @author Brian Greenacre <bgreenacre42@gmail.com>
  * @version $id$
  */
-class Urls {
-
-    use \WordpressFoundation\Traits\ContainerAware;
+class Urls extends Provider {
 
     /**
      * Generate a url for an asset.

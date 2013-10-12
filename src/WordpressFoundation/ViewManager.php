@@ -16,9 +16,7 @@ use Exception;
  * @author Brian Greenacre <bgreenacre42@gmail.com>
  * @version $id$
  */
-class ViewManager {
-
-    use \WordpressFoundation\Traits\ContainerAware;
+class ViewManager extends Provider {
 
     /**
      * Load a view and render it.

@@ -7,6 +7,7 @@
  * @version $id$
  */
 
+use Pimple;
 use Closure;
 use InvalidArgumentException;
 
@@ -17,9 +18,7 @@ use InvalidArgumentException;
  * @author Brian Greenacre <bgreenacre42@gmail.com>
  * @version $id$
  */
-class Hooks {
-
-    use \WordpressFoundation\Traits\ContainerAware;
+class Hooks extends Provider {
 
 	/**
 	 * Default priority to set on hook.
@@ -33,11 +32,14 @@ class Hooks {
 	 * Construct object and optionally change default priority.
 	 *
 	 * @access public
+	 * @param Pimple  $container       Plugin container object.
 	 * @param integer $defaultPriority Default priority to set on hook.
 	 * @return void
 	 */
-	public function __construct($defaultPriority = null)
+	public function __construct(Pimple $container, $defaultPriority = null)
 	{
+		parent::__construct($container);
+
 		if ($defaultPriority !== null)
 		{
 			// Set default priority

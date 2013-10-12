@@ -7,6 +7,7 @@
  * @version $id$
  */
 
+use Pimple;
 use Exception;
 use Closure;
 use Symfony\Component\Yaml\Yaml;
@@ -18,7 +19,7 @@ use Symfony\Component\Yaml\Yaml;
  * @author Brian Greenacre <bgreenacre42@gmail.com>
  * @version $id$
  */
-class FileLoader {
+class FileLoader extends Provider {
 
     /**
      * Paths to look for files in.
@@ -32,11 +33,14 @@ class FileLoader {
      * Construct object.
      *
      * @access public
-     * @param array $paths Array of paths to load files from.
+     * @param Pimple $container Plugin container object.
+     * @param array  $paths     Array of paths to load files from.
      * @return void
      */
-    public function __construct(array $paths)
+    public function __construct(Pimple $container, array $paths)
     {
+        parent::__construct($container);
+
         $this->setPaths($paths);
     }
 
