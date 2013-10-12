@@ -30,6 +30,8 @@ class ViewManager {
      */
     public function make($view, array $data = null)
     {
+        $container =& $this->getContainer();
+
         if ($data !== null)
         {
             extract($data, EXTR_SKIP);
@@ -41,8 +43,7 @@ class ViewManager {
         try
         {
             // Use FileLoader to get rendered view.
-            $this->getProvider('fileloader')
-                ->load($this->container['paths.views'] . $view, 'php');
+            include $this->container['paths.views'] . $view . '.php';
         }
         catch (Exception $e)
         {

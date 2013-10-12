@@ -1,6 +1,7 @@
 <?php namespace WordpressFoundation\Traits;
 
 use Pimple;
+use InvalidArgumentException;
 
 trait ContainerAware {
 
@@ -48,6 +49,7 @@ trait ContainerAware {
     {
         if ( ! isset($this->container[$provider]))
         {
+            var_dump($this->container);
             throw new InvalidArgumentException(
                 sprintf(
                     'WordpressFoundation provider "%s" does not exist.',

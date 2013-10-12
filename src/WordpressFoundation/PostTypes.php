@@ -40,24 +40,9 @@ class PostTypes {
         return $this;
     }
 
-    public function addType($type, array $args = array(), array $subMenus = null)
+    public function addType($type, array $args = array())
     {
         $this->types[$type] = $args;
-
-        if ($subMenus !== null)
-        {
-            if (is_numeric(key($subMenus)))
-            {
-                foreach ($subMenus as $subMenu)
-                {
-                    $this->getProvider('menus')->add($subMenu);
-                }
-            }
-            else
-            {
-                $this->getProvider('menus')->add($subMenus);
-            }
-        }
 
         return $this;
     }
@@ -68,8 +53,7 @@ class PostTypes {
         {
             $this->addType(
                 array_get($type, 'name'),
-                array_get($type, 'args'),
-                array_get($type, 'sub_menus')
+                array_get($type, 'args')
             );
         }
 

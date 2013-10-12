@@ -19,6 +19,37 @@ use Pimple;
 class Plugin extends Pimple {
 
     /**
+     * Object of container.
+     * 
+     * @var Plugin
+     */
+    static protected $instance;
+
+    /**
+     * Return the instance of this plugin container.
+     *
+     * @access public
+     * @return Plugin Container of plugin.
+     */
+    public static function instance()
+    {
+        return self::$instance;
+    }
+
+    /**
+     * Expand constructor to set the container instance.
+     *
+     * @access public
+     * @param array $values [description]
+     */
+    public function __construct(array $values = array())
+    {
+        parent::__construct($values);
+
+        self::$instance = $this;
+    }
+
+    /**
      * Bootstrap the plugin by loading/setting
      * default container dependencys.
      *
@@ -32,8 +63,8 @@ class Plugin extends Pimple {
         {
             return new FileLoader(
                 array(
-                    'config'    => $c['paths.config'],
-                    'resources' => $c['paths.resources'],
+                    'config'    => $this['paths.config'],
+                    'resources' => $this['paths.resources'],
                 )
             );
         });
@@ -55,7 +86,7 @@ class Plugin extends Pimple {
         {
             $provider = new ViewManager();
 
-            $provider->setContainer($c);
+            $provider->setContainer($this);
 
             return $provider;
         });
@@ -64,8 +95,8 @@ class Plugin extends Pimple {
         $this['config'] = $this->share(function($c)
         {
             return new Config(
-                $c['fileloader'],
-                (isset($c['plugin.slug'])) ? $c['plugin.slug'] : null
+                $this['fileloader'],
+                (isset($this['plugin.slug'])) ? $this['plugin.slug'] : null
             );
         });
 
@@ -73,34 +104,34 @@ class Plugin extends Pimple {
         {
             $provider = new Hooks();
 
-            $provider->setContainer($c);
+            $provider->setContainer($this);
 
             return $provider;
         });
 
         $this['menus'] = $this->share(function($c)
         {
-            $provider = new Menus($c['config']->load('menus')->asArray());
+            $provider = new Menus($this['config']->load('menus')->asArray());
 
-            $provider->setContainer($c);
+            $provider->setContainer($this);
 
             return $provider;
         });
 
         $this['post.types'] = $this->share(function($c)
         {
-            $provider = new PostTypes($c['config']->load('post.types')->asArray());
+            $provider = new PostTypes($this['config']->load('post.types')->asArray());
 
-            $provider->setContainer($c);
+            $provider->setContainer($this);
 
             return $provider;
         });
 
         $this['taxonomies'] = $this->share(function($c)
         {
-            $provider = new Taxonomies($c['config']->load('taxonomies')->asArray());
+            $provider = new Taxonomies($this['config']->load('taxonomies')->asArray());
 
-            $provider->setContainer($c);
+            $provider->setContainer($this);
 
             return $provider;
         });
@@ -114,7 +145,7 @@ class Plugin extends Pimple {
         {
             $provider = new Assets();
 
-            $provider->setContainer($c);
+            $provider->setContainer($this);
 
             return $provider;
         });
@@ -123,16 +154,16 @@ class Plugin extends Pimple {
         {
             $provider = new Urls();
 
-            $provider->setContainer($c);
+            $provider->setContainer($this);
 
             return $provider;
         });
 
-        $this['controller'] = $this->protect(function($controller) use ($c)
+        $this['controller'] = $this->protect(function($controller)
         {
             if ($controller)
             {
-                $callback = function() use ($controller, $c)
+                $callback = function() use ($controller)
                 {
                     echo $this['controller.resolver']($controller, func_get_args());
                 };
@@ -145,31 +176,26 @@ class Plugin extends Pimple {
             return $callback;
         });
 
-        $this['controller.resolver'] = $this->protect(function($controller, $args) use ($c)
+        $this['controller.resolver'] = $this->protect(function($controller, $args)
         {
-            if (is_callable($controller, true))
+            if ($sep = strpos($controller, '@'))
             {
-                return call_user_func_array($controller, $args);
+                $action = substr($controller, $sep+1);
+                $controller = substr($controller, 0, $sep);
             }
             else
             {
-                if ($sep = strpos($controller, '::'))
-                {
-                    $action = substr($controller, $sep+2);
-                    $controller = substr($controller, 0, $sep);
-                }
-                else
-                {
-                    $action = 'indexAction';
-                }
-
-                $controllerObject = new $controller($c);
-
-                return call_user_func_array(
-                    array($controllerObject, $action),
-                    $args
-                );
+                $action = 'indexAction';
             }
+
+            $controllerObject = new $controller();
+
+            $controllerObject->setContainer($this);
+
+            return call_user_func_array(
+                array($controllerObject, $action),
+                $args
+            );
         });
 
         return $this;
@@ -195,13 +221,13 @@ class Plugin extends Pimple {
 
         $this['hooks']->addAction('init', function($c)
         {
-            $c['post.types']->register();
-            $c['taxonomies']->register();
+            $this['post.types']->register();
+            $this['taxonomies']->register();
         }, 2);
 
         $this['hooks']->addAction('admin_menu', function($c)
         {
-            $c['menus']->register();
+            $this['menus']->register();
         });
     }
 

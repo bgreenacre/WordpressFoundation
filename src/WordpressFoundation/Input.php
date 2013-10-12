@@ -128,6 +128,29 @@ class Input {
         return $_SERVER['REQUEST_METHOD'];
     }
 
+    public function getNamespace($namespace)
+    {
+        $namespacedInput = array();
+
+        foreach ($this->query as $key => $value)
+        {
+            if (strpos($key, $namespace . '.') !== false)
+            {
+                $namespacedInput[substr($key, strlen($namespace . '.'))] = $value;
+            }
+        }
+
+        foreach ($this->post as $key => $value)
+        {
+            if (strpos($key, $namespace . '.') !== false)
+            {
+                $namespacedInput[substr($key, strlen($namespace . '.'))] = $value;
+            }
+        }
+
+        return $namespacedInput;
+    }
+
     /**
      * Get post value.
      * 
