@@ -36,6 +36,8 @@ class Plugin extends Pimple {
         return self::$instance;
     }
 
+    protected $interfaceToImplement = 'WordpressFoundation\ServiceProviderInterface';
+
     /**
      * Expand constructor to set the container instance.
      *
@@ -230,10 +232,18 @@ class Plugin extends Pimple {
 
     public function register($provider)
     {
-        if ($interfaces = class_implements($provider) && ! in_array('WordpressFoundation\ServiceProviderInterface', $interfaces))
+        $interfaces = class_implements($provider);
+
+        if (is_array($interfaces) && ! in_array($this->interfaceToImplement, $interfaces))
         {
             throw new InvalidArgumentException();
         }
+
+        $provider = new $provider();
+
+        $provider->register($this);
+
+        return $this;
     }
 
 }
