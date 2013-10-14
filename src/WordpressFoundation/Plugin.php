@@ -187,6 +187,12 @@ class Plugin extends Pimple {
             }
         });
 
+        // Insert providers provided by plugin
+        foreach ($this['config']->load('providers')->asArray() as $provider)
+        {
+            $this->register($provider);
+        }
+
         return $this;
     }
 
@@ -220,6 +226,14 @@ class Plugin extends Pimple {
         {
             $this['menus']->register();
         });
+    }
+
+    public function register($provider)
+    {
+        if ($interfaces = class_implements($provider) && ! in_array('WordpressFoundation\ServiceProviderInterface', $interfaces))
+        {
+            throw new InvalidArgumentException();
+        }
     }
 
 }
