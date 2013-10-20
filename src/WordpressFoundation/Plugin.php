@@ -19,39 +19,6 @@ use Pimple;
 class Plugin extends Pimple {
 
     /**
-     * Object of container.
-     * 
-     * @var Plugin
-     */
-    static protected $instance;
-
-    /**
-     * Return the instance of this plugin container.
-     *
-     * @access public
-     * @return Plugin Container of plugin.
-     */
-    public static function instance()
-    {
-        return self::$instance;
-    }
-
-    protected $interfaceToImplement = 'WordpressFoundation\ServiceProviderInterface';
-
-    /**
-     * Expand constructor to set the container instance.
-     *
-     * @access public
-     * @param array $values [description]
-     */
-    public function __construct(array $values = array())
-    {
-        parent::__construct($values);
-
-        self::$instance = $this;
-    }
-
-    /**
      * Bootstrap the plugin by loading/setting
      * default container dependencys.
      *
