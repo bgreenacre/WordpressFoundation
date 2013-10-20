@@ -105,6 +105,24 @@ class Assets extends Provider {
     {
         foreach ($assets as $key => $asset)
         {
+            if (is_string($asset))
+            {
+                foreach (array('admin', 'login', 'front') as $inUri)
+                {
+                    if (strpos($asset, $inUri) !== false)
+                    {
+                        $context = $inUri;
+                    }
+                }
+
+                $asset = array(
+                    'handle'  => sprintf('%s.%s', $this->getContainer()['plugin.slug'], basename($asset)),
+                    'uri'     => $asset,
+                    'context' => ($context) ?: 'front',
+                    'version' => $this->getContainer()['plugin.version'],
+                );
+            }
+
             $asset['enqueue'] = (bool) array_get($asset, 'enqueue', true);
             $asset['context'] = array_get($asset, 'context', 'front');
 
