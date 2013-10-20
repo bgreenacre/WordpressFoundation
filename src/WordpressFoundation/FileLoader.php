@@ -207,4 +207,47 @@ class FileLoader extends Provider {
         return $this->paths;
     }
 
+    /**
+     * Add a path to a context.
+     * 
+     * @param string $path    A file path where files can be loaded from.
+     * @param string $context What group of paths this path belongs to.
+     * @return $this Chainable method.
+     */
+    public function addPath($path, $context)
+    {
+        if ( ! array_key_exists($context, $this->paths))
+        {
+            $this->paths[$context] = array();
+        }
+
+        if ( ! is_array($this->paths[$context]))
+        {
+            $this->paths[$context] = array($this->paths[$context]);
+        }
+
+        $this->paths[$context][] = $path;
+
+        return $this;
+    }
+
+    /**
+     * Remove a path from a group.
+     *
+     * @param string $path    A file path which to remove.
+     * @param string $context What group of paths this path belongs to.
+     * @return $this Chainable method.
+     */
+    public function removePath($path, $context)
+    {
+        if (array_key_exists($context, $this->paths))
+        {
+            $keyOfPath = array_search($path, $this->paths[$context]);
+
+            array_forget($this->paths, $context . '.' . $keyOfPath);
+        }
+
+        return $this;
+    }
+
 }
