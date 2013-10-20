@@ -226,7 +226,7 @@ class FileLoader extends Provider {
             $this->paths[$context] = array($this->paths[$context]);
         }
 
-        $this->paths[$context][] = $path;
+        array_unshift($this->paths[$context, $path);
 
         return $this;
     }
