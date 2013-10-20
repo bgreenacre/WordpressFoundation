@@ -175,16 +175,6 @@ class Plugin extends Pimple {
     {
         $this['assets']->register();
 
-        $this['hooks']->activateHook(function($c)
-        {
-            flush_rewrite_rules();
-        });
-
-        $this['hooks']->deactivateHook(function($c)
-        {
-            flush_rewrite_rules();
-        });
-
         $this['hooks']->addAction('init', function($c)
         {
             $this['post.types']->register();
