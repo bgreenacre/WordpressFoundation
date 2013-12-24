@@ -10,11 +10,13 @@
         }
     ],
     "autoload": {
-        "psr-0": {"WordpressFoundation": "src/"}
+        "psr-0": {"WordpressFoundation": "src/"},
+        "files": [
+            "src/WordpressFoundation/helpers.php"
+        ]
     },
     "require": {
     	"php": ">=5.4.0",
-        "illuminate/container": "4.1.*",
-        "illuminate/support": "4.1.*"
+        "illuminate/container": "4.1.*"
     }
 }
