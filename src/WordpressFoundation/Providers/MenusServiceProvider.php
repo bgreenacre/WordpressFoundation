@@ -42,7 +42,7 @@ class MenusServiceProvider extends AbstractServiceProvider {
                             array_get($menu, 'menu_title'),
                             array_get($menu, 'capability', 'activate_plugins'),
                             array_get($menu, 'menu_slug'),
-                            $this->app[array_get($menu, 'controller')]
+                            $this->app[array_get($menu, 'callback')]
                         );
 
                         break;
@@ -53,7 +53,7 @@ class MenusServiceProvider extends AbstractServiceProvider {
                             array_get($menu, 'menu_title'),
                             array_get($menu, 'capability', 'activate_plugins'),
                             array_get($menu, 'menu_slug'),
-                            $this->app[array_get($menu, 'controller')]
+                            $this->app[array_get($menu, 'callback')]
                             array_get($menu, 'icon_url'),
                             array_get($menu, 'position')
                         );
