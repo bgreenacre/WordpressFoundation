@@ -1,25 +1,15 @@
 <?php namespace WordpressFoundation;
-/**
- * WordpressFoundation Utilities
- *
- * @package WordpressFoundation
- * @author Brian Greenacre <bgreenacre42@gmail.com>
- * @version $id$
- */
 
-use Pimple;
 use Exception;
-use Closure;
-use Symfony\Component\Yaml\Yaml;
 
 /**
  * Loads file contents.
  *
- * @package WordpressFoundation
+ * @package WpQueue
  * @author Brian Greenacre <bgreenacre42@gmail.com>
  * @version $id$
  */
-class FileLoader extends Provider {
+class FileLoader {
 
     /**
      * Paths to look for files in.
@@ -37,10 +27,8 @@ class FileLoader extends Provider {
      * @param array  $paths     Array of paths to load files from.
      * @return void
      */
-    public function __construct(Pimple $container, array $paths)
+    public function __construct(array $paths)
     {
-        parent::__construct($container);
-
         $this->setPaths($paths);
     }
 
@@ -121,10 +109,6 @@ class FileLoader extends Provider {
                     return json_decode(file_get_contents($file . $extension), true);
 
                     break;
-                case 'yml':
-                    return Yaml::parse($file . $extension);
-
-                    break;
                 case 'xml':
                     return simplexml_load_file($file . $extension);
 
@@ -154,26 +138,6 @@ class FileLoader extends Provider {
         }
 
         return $this->load($paths . $file, 'php');
-    }
-
-    /**
-     * Load a resource file.
-     *
-     * @access public
-     * @param  string $file      Filename
-     * @param  [type] $extension File extension.
-     * @return mixed             File contents
-     */
-    public function resource($file, $extension)
-    {
-        $paths = $this->getPaths('resources');
-
-        if (is_array($paths))
-        {
-            $this->loadByPaths($paths, $file, $extension);
-        }
-
-        return $this->load($paths . $file, $extension);
     }
 
     /**
@@ -226,7 +190,7 @@ class FileLoader extends Provider {
             $this->paths[$context] = array($this->paths[$context]);
         }
 
-        array_unshift($this->paths[$context, $path);
+        array_unshift($this->paths[$context], $path);
 
         return $this;
     }
