@@ -1,4 +1,4 @@
-<?php namespace WpQueue;
+<?php namespace WordpressFoundation;
 /**
  * WordpressFoundation Package
  *

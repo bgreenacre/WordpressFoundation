@@ -30,7 +30,7 @@ abstract class AbstractServiceProvider {
      * @param  \WordpressFoundation\Plugin $app
      * @return void
      */
-    public function __construct($app)
+    public function __construct(\WordpressFoundation\Plugin $app)
     {
         $this->app = $app;
     }

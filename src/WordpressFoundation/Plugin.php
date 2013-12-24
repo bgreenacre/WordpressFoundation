@@ -1,4 +1,4 @@
-<?php namespace WpQueue;
+<?php namespace WordpressFoundation;
 /**
  * WordpressFoundation Package
  *
@@ -8,6 +8,12 @@
  */
 
 use Providers\ConfigServiceProvider;
+use Providers\CacheServiceProvider;
+use Providers\MenusServiceProvider;
+use Providers\AssetsServiceProvider;
+use Providers\PostTypesServiceProvider;
+use Providers\TaxonomiesServiceProvider;
+use Providers\ViewServiceProvider;
 use Illuminate\Container\Container;
 
 /**
@@ -113,7 +119,6 @@ class Plugin extends Container {
         $this->register(new ConfigServiceProvider($this));
         $this->register(new AssetsServiceProvider($this));
         $this->register(new CacheServiceProvider($this));
-        $this->register(new ControllerServiceProvider($this));
         $this->register(new MenusServiceProvider($this));
         $this->register(new PostTypesServiceProvider($this));
         $this->register(new TaxonomiesServiceProvider($this));
