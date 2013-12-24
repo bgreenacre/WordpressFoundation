@@ -3,21 +3,21 @@
         "This file locks the dependencies of your project to a known state",
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file"
     ],
-    "hash": "f80a68a5d72a816ed9e81db396ef215c",
+    "hash": "a41f549a5b01dde0cbee4ce06314afc2",
     "packages": [
         {
             "name": "illuminate/support",
-            "version": "v4.0.8",
+            "version": "v4.1.9",
             "target-dir": "Illuminate/Support",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/support.git",
-                "reference": "bec895ef2331ff2f4afbbe48d1ea3d48c3bd8a9f"
+                "reference": "5625c8d61171f57da3495d2163370b03c0cfa94a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/illuminate/support/zipball/bec895ef2331ff2f4afbbe48d1ea3d48c3bd8a9f",
-                "reference": "bec895ef2331ff2f4afbbe48d1ea3d48c3bd8a9f",
+                "url": "https://api.github.com/repos/illuminate/support/zipball/5625c8d61171f57da3495d2163370b03c0cfa94a",
+                "reference": "5625c8d61171f57da3495d2163370b03c0cfa94a",
                 "shasum": ""
             },
             "require": {
@@ -31,7 +31,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "4.0-dev"
+                    "dev-master": "4.1-dev"
                 }
             },
             "autoload": {
@@ -54,20 +54,20 @@
                     "role": "Developer"
                 }
             ],
-            "time": "2013-10-03 18:37:29"
+            "time": "2013-12-12 13:21:25"
         },
         {
             "name": "pimple/pimple",
-            "version": "dev-master",
+            "version": "1.1.x-dev",
             "source": {
                 "type": "git",
                 "url": "https://github.com/fabpot/Pimple.git",
-                "reference": "471c7d7c52ad6594e17b8ec33efdd1be592b5d83"
+                "reference": "2019c145fe393923f3441b23f29bbdfaa5c58c4d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/fabpot/Pimple/zipball/471c7d7c52ad6594e17b8ec33efdd1be592b5d83",
-                "reference": "471c7d7c52ad6594e17b8ec33efdd1be592b5d83",
+                "url": "https://api.github.com/repos/fabpot/Pimple/zipball/2019c145fe393923f3441b23f29bbdfaa5c58c4d",
+                "reference": "2019c145fe393923f3441b23f29bbdfaa5c58c4d",
                 "shasum": ""
             },
             "require": {
@@ -100,7 +100,7 @@
                 "container",
                 "dependency injection"
             ],
-            "time": "2013-09-19 04:53:08"
+            "time": "2013-11-22 08:30:29"
         },
         {
             "name": "symfony/yaml",
@@ -109,12 +109,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/Yaml.git",
-                "reference": "a3e81e895bde9964f0956e747badf2890aed5c05"
+                "reference": "4f3569bb23953116281fb3a642c4266ce84a2f44"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/Yaml/zipball/a3e81e895bde9964f0956e747badf2890aed5c05",
-                "reference": "a3e81e895bde9964f0956e747badf2890aed5c05",
+                "url": "https://api.github.com/repos/symfony/Yaml/zipball/4f3569bb23953116281fb3a642c4266ce84a2f44",
+                "reference": "4f3569bb23953116281fb3a642c4266ce84a2f44",
                 "shasum": ""
             },
             "require": {
@@ -147,7 +147,7 @@
             ],
             "description": "Symfony Yaml Component",
             "homepage": "http://symfony.com",
-            "time": "2013-10-10 22:23:27"
+            "time": "2013-11-25 10:21:43"
         }
     ],
     "packages-dev": [

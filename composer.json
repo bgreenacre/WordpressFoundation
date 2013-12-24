@@ -16,6 +16,6 @@
     	"php": ">=5.4.0",
         "symfony/yaml": "2.2.*@dev",
         "pimple/pimple": "1.1.*@dev",
-        "illuminate/support": "4.0.*"
+        "illuminate/support": "4.1.*"
     }
 }
