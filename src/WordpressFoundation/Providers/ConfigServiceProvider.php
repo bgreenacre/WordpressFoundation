@@ -13,7 +13,7 @@ use WordpressFoundation\AbstractServiceProvider;
 /**
  * Registers the Config class to the plugin container.
  *
- * @package WordpressFoundation
+ * @package WordpressFoundation/Provider
  * @author Brian Greenacre <bgreenacre42@gmail.com>
  * @version $id$
  */

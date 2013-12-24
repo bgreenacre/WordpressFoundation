@@ -1,7 +1,21 @@
 <?php namespace WordpressFoundation\Providers;
+/**
+ * WordpressFoundation Package
+ *
+ * @package WordpressFoundation
+ * @author Brian Greenacre <bgreenacre42@gmail.com>
+ * @version $id$
+ */
 
 use WordpressFoundation\AbstractServiceProvider;
 
+/**
+ * Registers the cache provider functions.
+ *
+ * @package WordpressFoundation/Provider
+ * @author Brian Greenacre <bgreenacre42@gmail.com>
+ * @version $id$
+ */
 class CacheServiceProvider extends AbstractServiceProvider {
 
     public function register()
