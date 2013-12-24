@@ -1,13 +1,12 @@
 <?php namespace WordpressFoundation;
 /**
- * WordpressFoundation Utilities
+ * WordpressFoundation Package
  *
  * @package WordpressFoundation
  * @author Brian Greenacre <bgreenacre42@gmail.com>
  * @version $id$
  */
 
-use Pimple;
 use ArrayAccess;
 use DirectoryIterator;
 
@@ -21,7 +20,7 @@ use DirectoryIterator;
  * @author Brian Greenacre <bgreenacre42@gmail.com>
  * @version $id$
  */
-class Config extends Provider implements ArrayAccess {
+class Config implements ArrayAccess {
 
     /**
      * Holds the array.
@@ -94,10 +93,8 @@ class Config extends Provider implements ArrayAccess {
      * @param string $namespace Option namespace.
      * @return void
      */
-    public function __construct(Pimple $container, FileLoader $loader, $namespace = null)
+    public function __construct(FileLoader $loader, $namespace = null)
     {
-        parent::__construct($container);
-
         $this->setFileLoader($loader);
 
         if ($namespace !== null)

@@ -1,206 +1,171 @@
 <?php namespace WordpressFoundation;
 /**
- * WordpressFoundation Utilities
+ * WordpressFoundation Package
  *
  * @package WordpressFoundation
  * @author Brian Greenacre <bgreenacre42@gmail.com>
  * @version $id$
  */
 
-use Pimple;
+use Providers\ConfigServiceProvider;
+use Providers\CacheServiceProvider;
+use Providers\MenusServiceProvider;
+use Providers\AssetsServiceProvider;
+use Providers\PostTypesServiceProvider;
+use Providers\TaxonomiesServiceProvider;
+use Providers\ViewServiceProvider;
+use Illuminate\Container\Container;
 
 /**
- * Plugin container.
+ * Plugin container. This class represents the entire
+ * plugin that's utilizing this package.
  *
  * @package WordpressFoundation
  * @author Brian Greenacre <bgreenacre42@gmail.com>
  * @version $id$
  */
-class Plugin extends Pimple {
+class Plugin extends Container {
 
     /**
-     * Bootstrap the plugin by loading/setting
-     * default container dependencys.
+     * All of the registered service providers.
      *
-     * @access public
-     * @return $this
+     * @var array
      */
-    public function bootstrap()
+    protected $serviceProviders = array();
+
+    /**
+     * The names of the loaded service providers.
+     *
+     * @var array
+     */
+    protected $loadedProviders = array();
+
+    /**
+     * Build a new container object.
+     * 
+     * @param array $instances Pass any global properties here.
+     */
+    public function __construct(array $instances = array())
     {
-        // Add the plugin file loader.
-        $this['fileloader'] = $this->share(function()
+        foreach ($instances as $name => $value)
         {
-            return new FileLoader(
-                $this,
-                array(
-                    'config'    => $this['paths.config'],
-                    'resources' => $this['paths.resources'],
-                )
-            );
-        });
-
-        // Add the input class that handles GLOBAL inputs.
-        $this['input'] = $this->share(function()
-        {
-            return new Input(
-                $this,
-                array(
-                    'post'    => $_POST,
-                    'query'   => $_GET,
-                    'cookies' => $_COOKIE,
-                    )
-            );
-        });
-
-        // Add the view manager.
-        $this['view'] = $this->share(function()
-        {
-            return new ViewManager($this);
-        });
-
-        // Add the config/options loader.
-        $this['config'] = $this->share(function()
-        {
-            return new Config(
-                $this,
-                $this['fileloader'],
-                (isset($this['plugin.slug'])) ? $this['plugin.slug'] : null
-            );
-        });
-
-        $this['hooks'] = $this->share(function()
-        {
-            return new Hooks($this);
-        });
-
-        $this['menus'] = $this->share(function()
-        {
-            return new Menus($this, $this['config']->load('menus')->asArray());
-        });
-
-        $this['post.types'] = $this->share(function()
-        {
-            return new PostTypes($this, $this['config']->load('post.types')->asArray());
-        });
-
-        $this['taxonomies'] = $this->share(function()
-        {
-            return new Taxonomies($this, $this['config']->load('taxonomies')->asArray());
-        });
-
-        $this['widgets'] = $this->share(function()
-        {
-            return new Widgets($this);
-        });
-
-        $this['assets'] = $this->share(function()
-        {
-            return new Assets($this, $this['config']->load('assets')->asArray());
-        });
-
-        $this['urls'] = $this->share(function()
-        {
-            return new Urls($this);
-        });
-
-        $this['controller'] = $this->protect(function($controller)
-        {
-            if ($controller)
-            {
-                $callback = function() use ($controller)
-                {
-                    echo $this['controller.resolver']($controller, func_get_args());
-                };
-            }
-            else
-            {
-                $callback = null;
-            }
-
-            return $callback;
-        });
-
-        $this['controller.resolver'] = $this->protect(function($controller, $args)
-        {
-            if ($sep = strpos($controller, '@'))
-            {
-                $action = substr($controller, $sep+1);
-                $controller = substr($controller, 0, $sep);
-            }
-            else
-            {
-                $action = 'indexAction';
-            }
-
-            $controllerObject = new $controller($this);
-
-            switch (count($args))
-            {
-                case 0:
-                    return $controllerObject->$action();
-
-                case 1:
-                    return $controllerObject->$action($args[0]);
-
-                case 2:
-                    return $controllerObject->$action($args[0], $args[1]);
-
-                case 3:
-                    return $controllerObject->$action($args[0], $args[1], $args[2]);
-
-                case 4:
-                    return $controllerObject->$action($args[0], $args[1], $args[2], $args[3]);
-
-                default:
-                    return call_user_func_array(array($controllerObject, $action), $args);
-            }
-        });
-
-        // Insert providers provided by plugin
-        foreach ($this['config']->load('providers')->asArray() as $provider)
-        {
-            $this->register($provider);
+            $this->instance($name, $value);
         }
-
-        return $this;
     }
 
     /**
-     * Run the plugin.
-     *
-     * @access public
+     * Bootstrap the plugin. This is where all the
+     * providers are registered.
+     * 
+     * @return void
+     */
+    public function bootstrap()
+    {
+        $this->registerSingletons();
+        $this->registerProviders();
+    }
+
+    /**
+     * Run the plugin. Here is where the plugin should
+     * be starting to add it's actions in wordpress and
+     * can start using other providers that have been
+     * registered in the plugin container.
+     * 
      * @return void
      */
     public function run()
     {
-        $this['assets']->register();
-
-        $this['hooks']->addAction('init', function($c)
-        {
-            $this['post.types']->register();
-            $this['taxonomies']->register();
-        }, 2);
-
-        $this['hooks']->addAction('admin_menu', function($c)
-        {
-            $this['menus']->register();
-        });
+        $this->bootProviders();
     }
 
-    public function register($provider)
+    /**
+     * Boot up all registered providers.
+     * 
+     * @return void
+     */
+    public function bootProviders()
     {
-        $interfaces = class_implements($provider);
-
-        if (is_array($interfaces) && ! in_array($this->interfaceToImplement, $interfaces))
+        foreach ($this->serviceProviders as $provider)
         {
-            throw new InvalidArgumentException();
+            $provider->boot();
+        }
+    }
+
+    /**
+     * Registers singletons for the plugin core.
+     * 
+     * @return void
+     */
+    public function registerSingletons()
+    {
+        $this->singleton(
+            'fileloader',
+            new FileLoader(
+                array(
+                    'config' => $this['path.config'],
+                    'views'  => $this['path.views'],
+                )
+            )
+        );
+    }
+
+    /**
+     * Register all the internal core providers here.
+     * 
+     * @return void
+     */
+    public function registerProviders()
+    {
+        $this->register(new ConfigServiceProvider($this));
+        $this->register(new AssetsServiceProvider($this));
+        $this->register(new CacheServiceProvider($this));
+        $this->register(new MenusServiceProvider($this));
+        $this->register(new PostTypesServiceProvider($this));
+        $this->register(new TaxonomiesServiceProvider($this));
+        $this->register(new ViewServiceProvider($this));
+    }
+
+    /**
+     * Register a service provider with the application.
+     *
+     * @param  \Illuminate\Support\ServiceProvider|string  $provider
+     * @param  array  $options
+     * @return void
+     */
+    public function register($provider, $options = array())
+    {
+        // If the given "provider" is a string, we will resolve it, passing in the
+        // application instance automatically for the developer. This is simply
+        // a more convenient way of specifying your service provider classes.
+        if (is_string($provider))
+        {
+            $provider = $this->resolveProviderClass($provider);
         }
 
-        $provider = new $provider();
+        $provider->register();
 
-        $provider->register($this);
+        // Once we have registered the service we will iterate through the options
+        // and set each of them on the application so they will be available on
+        // the actual loading of the service objects and for developer usage.
+        foreach ($options as $key => $value)
+        {
+            $this[$key] = $value;
+        }
 
-        return $this;
+        $this->serviceProviders[] = $provider;
+
+        $this->loadedProviders[get_class($provider)] = true;
+    }
+
+    /**
+     * Resolve a service provider instance from the class name.
+     *
+     * @param  string  $provider
+     * @return \Illuminate\Support\ServiceProvider
+     */
+    protected function resolveProviderClass($provider)
+    {
+        return new $provider($this);
     }
 
 }
