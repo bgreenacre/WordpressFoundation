@@ -1,23 +1,23 @@
 <?php namespace WpQueue;
 /**
-* WordpressFoundation Package
-*
-* @package WordpressFoundation
-* @author Brian Greenacre <bgreenacre42@gmail.com>
-* @version $id$
-*/
+ * WordpressFoundation Package
+ *
+ * @package WordpressFoundation
+ * @author Brian Greenacre <bgreenacre42@gmail.com>
+ * @version $id$
+ */
 
 use Providers\ConfigServiceProvider;
 use Illuminate\Container\Container;
 
 /**
-* Plugin container. This class represents the entire
-* plugin that's utilizing this package.
-*
-* @package WordpressFoundation
-* @author Brian Greenacre <bgreenacre42@gmail.com>
-* @version $id$
-*/
+ * Plugin container. This class represents the entire
+ * plugin that's utilizing this package.
+ *
+ * @package WordpressFoundation
+ * @author Brian Greenacre <bgreenacre42@gmail.com>
+ * @version $id$
+ */
 class Plugin extends Container {
 
     /**

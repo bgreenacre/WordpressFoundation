@@ -1,4 +1,11 @@
 <?php namespace WordpressFoundation;
+/**
+ * WordpressFoundation Package
+ *
+ * @package WordpressFoundation
+ * @author Brian Greenacre <bgreenacre42@gmail.com>
+ * @version $id$
+ */
 
 use Exception;
 
