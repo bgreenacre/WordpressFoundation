@@ -1,4 +1,11 @@
 <?php namespace WpQueue;
+/**
+* WordpressFoundation Package
+*
+* @package WordpressFoundation
+* @author Brian Greenacre <bgreenacre42@gmail.com>
+* @version $id$
+*/
 
 use ArrayAccess;
 use DirectoryIterator;
