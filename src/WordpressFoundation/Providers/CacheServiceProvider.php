@@ -18,6 +18,12 @@ use WordpressFoundation\AbstractServiceProvider;
  */
 class CacheServiceProvider extends AbstractServiceProvider {
 
+    /**
+     * Register functions for cache provider to the plugin
+     * container object.
+     * 
+     * @return void
+     */
     public function register()
     {
         $this->app['cache.get'] = function($app, $key)
@@ -34,6 +40,15 @@ class CacheServiceProvider extends AbstractServiceProvider {
         {
             delete_transient($app['plugin.slug'] . '.' . $key);
         };
+    }
+
+    /**
+     * Boot cache service provider.
+     * 
+     * @return void
+     */
+    public function boot()
+    {
     }
 
 }

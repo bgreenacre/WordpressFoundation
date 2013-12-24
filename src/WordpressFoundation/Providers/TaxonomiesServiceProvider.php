@@ -19,6 +19,16 @@ use WordpressFoundation\AbstractServiceProvider;
 class TaxonomiesServiceProvider extends AbstractServiceProvider {
 
     /**
+     * Register taxonomies service provider function to
+     * plugin container object.
+     * 
+     * @return void
+     */
+    public function register()
+    {
+    }
+
+    /**
      * Boot the taxonomies service provider.
      * 
      * @return void

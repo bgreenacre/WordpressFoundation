@@ -19,6 +19,12 @@ use WordpressFoundation\AbstractServiceProvider;
  */
 class ViewServiceProvider extends AbstractServiceProvider {
 
+    /**
+     * Register View service provider function to
+     * plugin container object.
+     * 
+     * @return void
+     */
     public function register()
     {
         $this->app['view'] = function($app, $view, array $data)
@@ -48,6 +54,15 @@ class ViewServiceProvider extends AbstractServiceProvider {
             // Get the captured output and close the buffer
             return ob_get_clean();
         };
+    }
+
+    /**
+     * Boot View service provider.
+     * 
+     * @return void
+     */
+    public function boot()
+    {
     }
 
 }

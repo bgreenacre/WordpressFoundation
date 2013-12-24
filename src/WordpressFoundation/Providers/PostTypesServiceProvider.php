@@ -19,6 +19,16 @@ use WordpressFoundation\AbstractServiceProvider;
 class PostTypesServiceProvider extends AbstractServiceProvider {
 
     /**
+     * Register post types service provider functions
+     * to plugin container object.
+     * 
+     * @return void
+     */
+    public function register()
+    {
+    }
+
+    /**
      * Boot the post types service provider.
      * 
      * @return void

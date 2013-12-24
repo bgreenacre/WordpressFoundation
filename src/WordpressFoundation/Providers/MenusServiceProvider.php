@@ -19,6 +19,16 @@ use WordpressFoundation\AbstractServiceProvider;
 class MenusServiceProvider extends AbstractServiceProvider {
 
     /**
+     * Register menus service provider functions to plugin
+     * container object.
+     * 
+     * @return void
+     */
+    public function register()
+    {
+    }
+
+    /**
      * Boot the menus provider.
      * 
      * @return void
@@ -53,7 +63,7 @@ class MenusServiceProvider extends AbstractServiceProvider {
                             array_get($menu, 'menu_title'),
                             array_get($menu, 'capability', 'activate_plugins'),
                             array_get($menu, 'menu_slug'),
-                            $this->app[array_get($menu, 'callback')]
+                            $this->app[array_get($menu, 'callback')],
                             array_get($menu, 'icon_url'),
                             array_get($menu, 'position')
                         );
