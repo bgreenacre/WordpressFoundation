@@ -7,13 +7,13 @@
  * @version $id$
  */
 
-use Providers\ConfigServiceProvider;
-use Providers\CacheServiceProvider;
-use Providers\MenusServiceProvider;
-use Providers\AssetsServiceProvider;
-use Providers\PostTypesServiceProvider;
-use Providers\TaxonomiesServiceProvider;
-use Providers\ViewServiceProvider;
+use WordpressFoundation\Providers\ConfigServiceProvider;
+use WordpressFoundation\Providers\CacheServiceProvider;
+use WordpressFoundation\Providers\MenusServiceProvider;
+use WordpressFoundation\Providers\AssetsServiceProvider;
+use WordpressFoundation\Providers\PostTypesServiceProvider;
+use WordpressFoundation\Providers\TaxonomiesServiceProvider;
+use WordpressFoundation\Providers\ViewServiceProvider;
 use Illuminate\Container\Container;
 
 /**
