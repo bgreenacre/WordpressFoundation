@@ -28,7 +28,7 @@ class ConfigServiceProvider extends AbstractServiceProvider {
     {
         $this->app['config'] = $this->app->share(function($app)
         {
-            new Config($app['fileloader']);
+            new Config($app['fileloader'], $app['plugin.slug']);
         });
     }
 
