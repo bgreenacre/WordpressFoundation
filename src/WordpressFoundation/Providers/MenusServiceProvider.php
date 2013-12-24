@@ -39,7 +39,7 @@ class MenusServiceProvider extends AbstractServiceProvider {
         add_action('init', function()
         {
             // Get menus defined by config file.
-            $menus = $this->app['config']->load('menus')->toArray();
+            $menus = $this->app['config']->load('menus')->asArray();
 
             foreach ($menus as $menu)
             {

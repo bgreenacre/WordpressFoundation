@@ -98,7 +98,7 @@ class Plugin extends Container {
      */
     public function registerSingletons()
     {
-        $this->singleton(
+        $this->instance(
             'fileloader',
             new FileLoader(
                 array(

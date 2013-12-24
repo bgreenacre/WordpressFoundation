@@ -42,7 +42,7 @@ class PostTypesServiceProvider extends AbstractServiceProvider {
             // post.php config file and types index.
             $postTypes = $this->app['config']
                 ->load('post.types')
-                ->toArray();
+                ->asArray();
 
             // Register each post type.
             foreach ($postTypes as $type => $args)

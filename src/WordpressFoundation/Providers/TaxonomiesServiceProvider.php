@@ -43,7 +43,7 @@ class TaxonomiesServiceProvider extends AbstractServiceProvider {
             // config file.
             $taxonomies = $this->app['config']
                 ->load('taxonomies')
-                ->toArray();
+                ->asArray();
 
             // Register each taxonomy.
             foreach ($taxonomies as $name => $taxonomy)
