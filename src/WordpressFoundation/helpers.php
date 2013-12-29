@@ -367,21 +367,6 @@ if ( ! function_exists('array_set'))
     }
 }
 
-if ( ! function_exists('array_sort'))
-{
-    /**
-     * Sort the array using the given Closure.
-     *
-     * @param  array  $array
-     * @param  \Closure  $callback
-     * @return array
-     */
-    function array_sort($array, Closure $callback)
-    {
-        return Illuminate\Support\Collection::make($array)->sortBy($callback)->all();
-    }
-}
-
 if ( ! function_exists('array_where'))
 {
     /**
@@ -401,5 +386,19 @@ if ( ! function_exists('array_where'))
         }
 
         return $filtered;
+    }
+}
+
+if ( ! function_exists('value'))
+{
+    /**
+     * Return the default value of the given value.
+     *
+     * @param  mixed  $value
+     * @return mixed
+     */
+    function value($value)
+    {
+        return $value instanceof Closure ? $value() : $value;
     }
 }

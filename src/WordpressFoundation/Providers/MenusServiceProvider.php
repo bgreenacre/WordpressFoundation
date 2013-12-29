@@ -35,8 +35,8 @@ class MenusServiceProvider extends AbstractServiceProvider {
      */
     public function boot()
     {
-        // Add callback to init to inject menus into wordpress.
-        add_action('init', function()
+        // Add callback to admin_menu to inject menus into wordpress.
+        add_action('admin_menu', function()
         {
             // Get menus defined by config file.
             $menus = $this->app['config']->load('menus')->asArray();
@@ -52,7 +52,7 @@ class MenusServiceProvider extends AbstractServiceProvider {
                             array_get($menu, 'menu_title'),
                             array_get($menu, 'capability', 'activate_plugins'),
                             array_get($menu, 'menu_slug'),
-                            $this->app[array_get($menu, 'callback')]
+                            $this->app->make(array_get($menu, 'callback'))
                         );
 
                         break;
@@ -63,7 +63,7 @@ class MenusServiceProvider extends AbstractServiceProvider {
                             array_get($menu, 'menu_title'),
                             array_get($menu, 'capability', 'activate_plugins'),
                             array_get($menu, 'menu_slug'),
-                            $this->app[array_get($menu, 'callback')],
+                            $this->app->make(array_get($menu, 'callback')),
                             array_get($menu, 'icon_url'),
                             array_get($menu, 'position')
                         );
