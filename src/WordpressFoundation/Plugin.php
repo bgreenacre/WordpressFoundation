@@ -14,6 +14,7 @@ use WordpressFoundation\Providers\AssetsServiceProvider;
 use WordpressFoundation\Providers\PostTypesServiceProvider;
 use WordpressFoundation\Providers\TaxonomiesServiceProvider;
 use WordpressFoundation\Providers\ViewServiceProvider;
+use WordpressFoundation\Providers\ControllerServiceProvider;
 use Illuminate\Container\Container;
 
 /**
@@ -123,6 +124,7 @@ class Plugin extends Container {
         $this->register(new PostTypesServiceProvider($this));
         $this->register(new TaxonomiesServiceProvider($this));
         $this->register(new ViewServiceProvider($this));
+        $this->register(new ControllerServiceProvider($this));
     }
 
     /**
