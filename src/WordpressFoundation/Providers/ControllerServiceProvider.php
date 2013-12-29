@@ -24,11 +24,13 @@ class ControllerServiceProvider extends AbstractServiceProvider {
             'controller',
             function($app, $controller)
             {
+                $args = array_splice(func_get_args(), -1);
+
                 if ($controller)
                 {
-                    $callback = function() use ($controller)
+                    $callback = function() use ($app, $args)
                     {
-                        echo $app['controller.resolver']($controller, func_get_args());
+                        echo $app->make('controller.resolver', $args);
                     };
                 }
                 else
@@ -42,8 +44,11 @@ class ControllerServiceProvider extends AbstractServiceProvider {
 
         $this->app->singleton(
             'controller.resolver',
-            function($app, $controller, $args)
+            function($app, array $args)
             {
+                $controller = $args[0];
+                $args       = array_splice($args, -1);
+
                 if ($sep = strpos($controller, '@'))
                 {
                     $action = substr($controller, $sep+1);
