@@ -131,11 +131,17 @@ class Plugin extends Container {
      * Register a service provider with the application.
      *
      * @param  \WordpressFoundation\Providers\AbstractServiceProvider|string  $provider
-     * @param  array  $options
-     * @return void
+     * @param  array $options
+     * @param  bool $force
+     * @return \WordpressFoundation\Providers\AbstractServiceProvider
      */
-    public function register($provider, $options = array())
+    public function register($provider, $options = array(), $force = false)
     {
+        if ($registered = $this->getRegistered($provider) && ! $force)
+        {
+            return $registered;
+        }
+
         // If the given "provider" is a string, we will resolve it, passing in the
         // application instance automatically for the developer. This is simply
         // a more convenient way of specifying your service provider classes.
@@ -154,20 +160,56 @@ class Plugin extends Container {
             $this[$key] = $value;
         }
 
-        $this->serviceProviders[] = $provider;
+        $this->markAsRegistered($provider);
 
-        $this->loadedProviders[get_class($provider)] = true;
+        // If the application has already booted, we will call this boot method on
+        // the provider class so it has an opportunity to do its boot logic and
+        // will be ready for any usage by the developer's application logics.
+        if ($this->booted) $provider->boot();
+
+        return $provider;
     }
 
     /**
      * Resolve a service provider instance from the class name.
      *
      * @param  string  $provider
-     * @return \Illuminate\Support\ServiceProvider
+     * @return \WordpressFoundation\Providers\AbstractServiceProvider
      */
     protected function resolveProviderClass($provider)
     {
         return new $provider($this);
+    }
+
+    /**
+     * Mark the given provider as registered.
+     *
+     * @param  \WordpressFoundation\Providers\AbstractServiceProvider
+     * @return void
+     */
+    protected function markAsRegistered($provider)
+    {
+        $this->serviceProviders[]      = $provider;
+        $this->loadedProviders[$class] = true;
+    }
+
+    /**
+     * Get the registered service provider instance if it exists.
+     *
+     * @param  \WordpressFoundation\Providers\AbstractServiceProvider|string  $provider
+     * @return \WordpressFoundation\Providers\AbstractServiceProvider|null
+     */
+    public function getRegistered($provider)
+    {
+        $name = is_string($provider) ? $provider : get_class($provider);
+
+        if (array_key_exists($name, $this->loadedProviders))
+        {
+            return array_first($this->serviceProviders, function($key, $value) use ($name)
+            {
+                return get_class($value) == $name;
+            });
+        }
     }
 
 }
