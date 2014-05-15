@@ -7,8 +7,6 @@
  * @version $id$
  */
 
-use WordpressFoundation\AbstractServiceProvider;
-
 /**
  * Resolve controllers and call their actions.
  *

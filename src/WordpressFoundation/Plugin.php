@@ -130,7 +130,7 @@ class Plugin extends Container {
     /**
      * Register a service provider with the application.
      *
-     * @param  \WordpressFoundation\AbstractServiceProvider|string  $provider
+     * @param  \WordpressFoundation\Providers\AbstractServiceProvider|string  $provider
      * @param  array  $options
      * @return void
      */

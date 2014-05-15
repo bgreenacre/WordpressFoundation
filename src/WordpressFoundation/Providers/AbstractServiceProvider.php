@@ -1,4 +1,4 @@
-<?php namespace WordpressFoundation;
+<?php namespace WordpressFoundation\Providers;
 /**
  * WordpressFoundation Package
  *

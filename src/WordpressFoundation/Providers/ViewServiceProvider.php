@@ -8,7 +8,6 @@
  */
 
 use Exception;
-use WordpressFoundation\AbstractServiceProvider;
 
 /**
  * Registers the View provider functions.

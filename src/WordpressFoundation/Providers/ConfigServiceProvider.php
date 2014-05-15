@@ -8,7 +8,6 @@
  */
 
 use WordpressFoundation\Config;
-use WordpressFoundation\AbstractServiceProvider;
 
 /**
  * Registers the Config class to the plugin container.

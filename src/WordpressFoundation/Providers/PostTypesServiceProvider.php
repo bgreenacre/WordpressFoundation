@@ -7,8 +7,6 @@
  * @version $id$
  */
 
-use WordpressFoundation\AbstractServiceProvider;
-
 /**
  * Registers the Post Types service provider.
  *
