@@ -10,7 +10,7 @@
         }
     ],
     "autoload": {
-        "psr-0": {"WordpressFoundation": "src/"},
+        "psr-0": { "WordpressFoundation": "src/" },
         "files": [
             "src/WordpressFoundation/helpers.php"
         ]
