@@ -145,12 +145,15 @@ class Config implements ArrayAccess {
         // let's try and load values from it.
         if (($filePath = $this->getFileLoader()->getPaths('config')) && ! $this->loaded($parts[0]))
         {
+            $filePath  = rtrim($filePath, '/') . DIRECTORY_SEPARATOR;
             $pathParts = $parts;
             $path      = '';
 
             // Loop through the parts until a file is found
             while ($part = array_shift($pathParts))
             {
+                $part = rtrim($part, '/') . DIRECTORY_SEPARATOR;
+
                 if (is_file($filePath . $path . $part . '.' . $this->extension))
                 {
                     // Replace directory characters with the
@@ -188,7 +191,7 @@ class Config implements ArrayAccess {
             // Overwrite any config file values with the value
             // loaded from the options api.
             $this[$parts[0]] = unserialize($optionValue);
-            
+
             // Track the loaded values.
             $this->loaded[] = $this->getNamespace() . $parts[0];
 
@@ -244,7 +247,7 @@ class Config implements ArrayAccess {
     public function loadNamespace($path = '')
     {
         $namespace = rtrim($this->getNamespace(), '.');
-        $filePath  = $this->getFileLoader()->getPaths('config');
+        $filePath  = rtrim($this->getFileLoader()->getPaths('config'), '/') . DIRECTORY_SEPARATOR;
 
         if ( ! $path && is_file($filePath . $namespace . '.' . $this->extension))
         {
@@ -285,7 +288,7 @@ class Config implements ArrayAccess {
                         $filePath . $namespace . $path . $filename,
                         $this->extension
                     );
-                    
+
                     $pathKey = $this->getNamespace();
 
                     if ($path)

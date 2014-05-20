@@ -39,7 +39,7 @@ class ViewServiceProvider extends AbstractServiceProvider {
             try
             {
                 // Use FileLoader to get rendered view.
-                include $app['path.views'] . $view . '.php';
+                include rtrim($app['path.views'], '/') . DIRECTORY_SEPARATOR . $view . '.php';
             }
             catch (Exception $e)
             {

@@ -60,7 +60,7 @@ class FileLoader {
             try
             {
                 // Try to load the file with path.
-                return $this->load($paths[$i] . $file, $extension);
+                return $this->load(rtrim($paths[$i], '/') . DIRECTORY_SEPARATOR . $file, $extension);
             }
             catch (Exception $e)
             {
@@ -141,10 +141,14 @@ class FileLoader {
 
         if (is_array($paths))
         {
-            $this->loadByPaths($paths, $file, 'php');
+            return $this->loadByPaths($paths, $file, 'php');
+        }
+        elseif (is_string($paths))
+        {
+            return $this->load(rtrim($paths, '/') . DIRECTORY_SEPARATOR . $file, 'php');
         }
 
-        return $this->load($paths . $file, 'php');
+        return null;
     }
 
     /**
