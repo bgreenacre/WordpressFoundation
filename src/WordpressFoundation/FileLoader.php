@@ -176,7 +176,9 @@ class FileLoader {
     {
         if ($which !== null)
         {
-            return array_get($this->paths, $which);
+            return (array_key_exists($which, $this->paths))
+                ? $this->paths[$which]
+                : null;
         }
 
         return $this->paths;
@@ -219,7 +221,10 @@ class FileLoader {
         {
             $keyOfPath = array_search($path, $this->paths[$context]);
 
-            array_forget($this->paths, $context . '.' . $keyOfPath);
+            if (isset($this->paths[$context][$keyOfPath]))
+            {
+                unset($this->paths[$context][$keyOfPath]);
+            }
         }
 
         return $this;
