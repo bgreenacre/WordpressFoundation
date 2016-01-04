@@ -59,8 +59,11 @@ class FileLoader {
         {
             try
             {
+                $path = str_replace(array('\\', '/'), DIRECTORY_SEPARATOR, $paths[$i]);
+                $path = rtrim($path, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
+
                 // Try to load the file with path.
-                return $this->load(rtrim($paths[$i], '/') . DIRECTORY_SEPARATOR . $file, $extension);
+                return $this->load($path . $file, $extension);
             }
             catch (Exception $e)
             {
@@ -160,7 +163,10 @@ class FileLoader {
      */
     public function setPaths(array $paths)
     {
-        $this->paths = $paths;
+        $this->paths = array_map(function ($path)
+        {
+            return str_replace(array('\\', '/'), DIRECTORY_SEPARATOR, $path);
+        }, $paths);
 
         return $this;
     }
