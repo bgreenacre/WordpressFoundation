@@ -14,7 +14,8 @@
     },
     "require": {
     	"php": ">=5.4.0",
-		"pimple/pimple": "^3.0"
+		"pimple/pimple": "^3.0",
+		"weew/php-helpers-array": "^1.0"
     },
     "minimum-stability": "dev"
 }

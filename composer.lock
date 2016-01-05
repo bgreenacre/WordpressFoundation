@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "6efe1c2a2a1f458bd4ddc9f73855ec4b",
-    "content-hash": "a3de9628c80bcaa70750ae3d884679d7",
+    "hash": "43cfc6b672f7cb1fe4830779da76ffe2",
+    "content-hash": "79225f918b68d1ef5094f5edf6695fc9",
     "packages": [
         {
             "name": "pimple/pimple",
@@ -52,6 +52,43 @@
                 "dependency injection"
             ],
             "time": "2015-09-11 15:11:22"
+        },
+        {
+            "name": "weew/php-helpers-array",
+            "version": "v1.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/weew/php-helpers-array.git",
+                "reference": "f2efa309c9e7ddefa888ef0b6b252051c527b0fc"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/weew/php-helpers-array/zipball/f2efa309c9e7ddefa888ef0b6b252051c527b0fc",
+                "reference": "f2efa309c9e7ddefa888ef0b6b252051c527b0fc",
+                "shasum": ""
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^4.7",
+                "satooshi/php-coveralls": "^0.6.1"
+            },
+            "type": "library",
+            "autoload": {
+                "files": [
+                    "src/array.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Maxim Kott",
+                    "email": "maximkott@gmail.com"
+                }
+            ],
+            "description": "Useful collection of php array helpers.",
+            "time": "2015-11-13 08:23:17"
         }
     ],
     "packages-dev": [],

@@ -92,7 +92,7 @@ class FileLoader {
         // file extension or make a call if it is a Closure.
         if ($extension instanceof Closure)
         {
-            return $extension($file, $c);
+            return $extension($file);
         }
         else
         {
@@ -148,7 +148,7 @@ class FileLoader {
         }
         elseif (is_string($paths))
         {
-            return $this->load(rtrim($paths, '/') . DIRECTORY_SEPARATOR . $file, 'php');
+            return $this->load($paths . $file, 'php');
         }
 
         return null;
@@ -165,7 +165,10 @@ class FileLoader {
     {
         $this->paths = array_map(function ($path)
         {
-            return str_replace(array('\\', '/'), DIRECTORY_SEPARATOR, $path);
+            $path = str_replace(array('\\', '/'), DIRECTORY_SEPARATOR, $path);
+            $path = rtrim($path, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
+
+            return $path;
         }, $paths);
 
         return $this;
