@@ -8,6 +8,7 @@
  */
 
 use Pimple\Container;
+use WordpressFoundation\Config;
 
 /**
  * Registers the Config class to the plugin container.

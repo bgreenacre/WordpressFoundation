@@ -8,6 +8,7 @@
  */
 
 use Exception;
+use Closure;
 
 /**
  * Loads file contents.

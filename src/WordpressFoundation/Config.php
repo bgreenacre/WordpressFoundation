@@ -239,15 +239,16 @@ class Config implements ArrayAccess {
      */
     public function loaded($key)
     {
+        $fullPartName = '';
         $parts = $this->getPathParts($key);
 
-        return (
-            isset($parts[0]) &&
-            in_array(
-                $this->getNamespace() . $parts[0],
-                $this->loaded
-            )
-        );
+        if (isset($parts[0]))
+        {
+            $fullPartName = $this->getNamespace() . $parts[0];
+        }
+
+        return ( ! empty($fullPartName) && in_array($fullPartName, $this->loaded))
+            ? true : false;
     }
 
     /**
