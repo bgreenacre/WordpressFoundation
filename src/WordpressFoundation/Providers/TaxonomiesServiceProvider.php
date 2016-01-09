@@ -8,7 +8,6 @@
  */
 
 use Pimple\Container;
-use Pimple\ServiceProviderInterface;
 
 /**
  * Registers the Taxonomies service provider.

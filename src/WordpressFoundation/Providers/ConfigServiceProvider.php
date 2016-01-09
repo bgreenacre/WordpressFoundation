@@ -8,7 +8,6 @@
  */
 
 use Pimple\Container;
-use Pimple\ServiceProviderInterface;
 
 /**
  * Registers the Config class to the plugin container.
@@ -30,6 +29,15 @@ class ConfigServiceProvider implements ServiceProviderInterface {
         {
             return new Config($app, $app['fileloader'], $app['plugin.slug']);
         });
+    }
+
+    /**
+     * Boot config service provider.
+     * 
+     * @return void
+     */
+    public function boot(Container $app)
+    {
     }
 
 }

@@ -8,7 +8,6 @@
  */
 
 use Pimple\Container;
-use Pimple\ServiceProviderInterface;
 
 /**
  * Resolve controllers and call their actions.
@@ -65,6 +64,15 @@ class ControllerServiceProvider implements ServiceProviderInterface {
                     break;
             }
         });
+    }
+
+    /**
+     * Boot controller service provider.
+     * 
+     * @return void
+     */
+    public function boot(Container $app)
+    {
     }
 
 }

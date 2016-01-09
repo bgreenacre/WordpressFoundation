@@ -9,7 +9,6 @@
 
 use Exception;
 use Pimple\Container;
-use Pimple\ServiceProviderInterface;
 
 /**
  * Registers the View provider functions.
