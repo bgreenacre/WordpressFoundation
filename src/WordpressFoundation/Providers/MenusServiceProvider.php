@@ -7,6 +7,9 @@
  * @version $id$
  */
 
+use Pimple\Container;
+use Pimple\ServiceProviderInterface;
+
 /**
  * Registers the menus service provider.
  *
@@ -14,7 +17,7 @@
  * @author Brian Greenacre <bgreenacre42@gmail.com>
  * @version $id$
  */
-class MenusServiceProvider extends AbstractServiceProvider {
+class MenusServiceProvider implements ServiceProviderInterface {
 
     /**
      * Register menus service provider functions to plugin
@@ -22,7 +25,7 @@ class MenusServiceProvider extends AbstractServiceProvider {
      * 
      * @return void
      */
-    public function register()
+    public function register(Container $app)
     {
     }
 
@@ -31,13 +34,13 @@ class MenusServiceProvider extends AbstractServiceProvider {
      * 
      * @return void
      */
-    public function boot()
+    public function boot(Container $app)
     {
         // Add callback to admin_menu to inject menus into wordpress.
-        add_action('admin_menu', function()
+        add_action('admin_menu', function() use ($app)
         {
             // Get menus defined by config file.
-            $menus = $this->app['config']->load('menus')->asArray();
+            $menus = $app['config']->load('menus')->asArray();
 
             foreach ($menus as $menu)
             {
@@ -50,7 +53,7 @@ class MenusServiceProvider extends AbstractServiceProvider {
                             array_get($menu, 'menu_title'),
                             array_get($menu, 'capability', 'activate_plugins'),
                             array_get($menu, 'menu_slug'),
-                            $this->app->make('controller', array_get($menu, 'callback'))
+                            $app['controller'](array_get($menu, 'callback'))
                         );
 
                         break;
@@ -61,7 +64,7 @@ class MenusServiceProvider extends AbstractServiceProvider {
                             array_get($menu, 'menu_title'),
                             array_get($menu, 'capability', 'activate_plugins'),
                             array_get($menu, 'menu_slug'),
-                            $this->app->make('controller', array_get($menu, 'callback')),
+                            $app['controller'](array_get($menu, 'callback')),
                             array_get($menu, 'icon_url'),
                             array_get($menu, 'position')
                         );

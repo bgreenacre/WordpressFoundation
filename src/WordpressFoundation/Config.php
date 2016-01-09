@@ -29,7 +29,7 @@ class Config implements ArrayAccess {
      * @access protected
      * @var array
      */
-    protected $data = array();
+    protected $data = [];
 
     /**
      * Contains wordpress option values in the
@@ -38,7 +38,7 @@ class Config implements ArrayAccess {
      * @access protected
      * @var array
      */
-    protected $options = array();
+    protected $options = [];
 
     /**
      * Set the name space for all options
@@ -72,7 +72,7 @@ class Config implements ArrayAccess {
      * @access protected
      * @var array
      */
-    protected $loaded = array();
+    protected $loaded = [];
 
     /**
      * The file extension the config files are using.
@@ -172,7 +172,7 @@ class Config implements ArrayAccess {
                         // Replace directory characters with the
                         // delimiter character for proper setting
                         // of the data array in this object.
-                        $pathKey = str_replace(array('/', '\\'), '.', $path);
+                        $pathKey = str_replace(['/', '\\'], '.', $path);
 
                         // Append the last part
                         $pathKey .= $part;

@@ -24,7 +24,7 @@ class FileLoader {
      * @access protected
      * @var array
      */
-    protected $paths = array();
+    protected $paths = [];
 
     /**
      * Construct object.
@@ -59,7 +59,7 @@ class FileLoader {
         {
             try
             {
-                $path = str_replace(array('\\', '/'), DIRECTORY_SEPARATOR, $paths[$i]);
+                $path = str_replace(['\\', '/'], DIRECTORY_SEPARATOR, $paths[$i]);
                 $path = rtrim($path, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
 
                 // Try to load the file with path.
@@ -165,7 +165,7 @@ class FileLoader {
     {
         $this->paths = array_map(function ($path)
         {
-            $path = str_replace(array('\\', '/'), DIRECTORY_SEPARATOR, $path);
+            $path = str_replace(['\\', '/'], DIRECTORY_SEPARATOR, $path);
             $path = rtrim($path, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
 
             return $path;
@@ -204,12 +204,12 @@ class FileLoader {
     {
         if ( ! array_key_exists($context, $this->paths))
         {
-            $this->paths[$context] = array();
+            $this->paths[$context] = [];
         }
 
         if ( ! is_array($this->paths[$context]))
         {
-            $this->paths[$context] = array($this->paths[$context]);
+            $this->paths[$context] = [$this->paths[$context]];
         }
 
         array_unshift($this->paths[$context], $path);

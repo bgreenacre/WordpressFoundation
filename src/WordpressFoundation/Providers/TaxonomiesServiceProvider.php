@@ -7,6 +7,9 @@
  * @version $id$
  */
 
+use Pimple\Container;
+use Pimple\ServiceProviderInterface;
+
 /**
  * Registers the Taxonomies service provider.
  *
@@ -14,7 +17,7 @@
  * @author Brian Greenacre <bgreenacre42@gmail.com>
  * @version $id$
  */
-class TaxonomiesServiceProvider extends AbstractServiceProvider {
+class TaxonomiesServiceProvider implements ServiceProviderInterface {
 
     /**
      * Register taxonomies service provider function to
@@ -22,7 +25,7 @@ class TaxonomiesServiceProvider extends AbstractServiceProvider {
      * 
      * @return void
      */
-    public function register()
+    public function register(Container $app)
     {
     }
 
@@ -31,15 +34,15 @@ class TaxonomiesServiceProvider extends AbstractServiceProvider {
      * 
      * @return void
      */
-    public function boot()
+    public function boot(Container $app)
     {
         // Add init callback to register new wordpress
         // taxonomies.
-        add_action('init', function()
+        add_action('init', function() use ($app)
         {
             // Get taxonomies defined in the taxonomies.php
             // config file.
-            $taxonomies = $this->app['config']
+            $taxonomies = $app['config']
                 ->load('taxonomies')
                 ->asArray();
 

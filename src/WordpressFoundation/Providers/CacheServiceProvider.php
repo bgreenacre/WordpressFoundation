@@ -7,6 +7,9 @@
  * @version $id$
  */
 
+use Pimple\Container;
+use Pimple\ServiceProviderInterface;
+
 /**
  * Registers the cache provider functions.
  *
@@ -14,7 +17,7 @@
  * @author Brian Greenacre <bgreenacre42@gmail.com>
  * @version $id$
  */
-class CacheServiceProvider extends AbstractServiceProvider {
+class CacheServiceProvider implements ServiceProviderInterface {
 
     /**
      * Register functions for cache provider to the plugin
@@ -22,19 +25,19 @@ class CacheServiceProvider extends AbstractServiceProvider {
      * 
      * @return void
      */
-    public function register()
+    public function register(Container $app)
     {
-        $this->app['cache.get'] = function($app, $key)
+        $app['cache.get'] = function($app, $key)
         {
             return get_transient($app['plugin.slug'] . '.' . $key);
         };
 
-        $this->app['cache.set'] = function($app, $key, $value, $ttl = 1800)
+        $app['cache.set'] = function($app, $key, $value, $ttl = 1800)
         {
             set_transient($app['plugin.slug'] . '.' . $key, $value, $ttl);
         };
 
-        $this->app['cache.delete'] = function($app, $key)
+        $app['cache.delete'] = function($app, $key)
         {
             delete_transient($app['plugin.slug'] . '.' . $key);
         };
@@ -45,7 +48,7 @@ class CacheServiceProvider extends AbstractServiceProvider {
      * 
      * @return void
      */
-    public function boot()
+    public function boot(Container $app)
     {
     }
 

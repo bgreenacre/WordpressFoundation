@@ -8,6 +8,8 @@
  */
 
 use Exception;
+use Pimple\Container;
+use Pimple\ServiceProviderInterface;
 
 /**
  * Registers the View provider functions.
@@ -16,7 +18,7 @@ use Exception;
  * @author Brian Greenacre <bgreenacre42@gmail.com>
  * @version $id$
  */
-class ViewServiceProvider extends AbstractServiceProvider {
+class ViewServiceProvider implements ServiceProviderInterface {
 
     /**
      * Register View service provider function to
@@ -24,9 +26,9 @@ class ViewServiceProvider extends AbstractServiceProvider {
      * 
      * @return void
      */
-    public function register()
+    public function register(Container $app)
     {
-        $this->app['view'] = function($app, $view, array $data)
+        $app['view'] = $app->factory(function($app, $view, array $data)
         {
             if ($data !== null)
             {
@@ -60,7 +62,7 @@ class ViewServiceProvider extends AbstractServiceProvider {
      * 
      * @return void
      */
-    public function boot()
+    public function boot(Container $app)
     {
     }
 
