@@ -224,6 +224,7 @@ class Config implements ArrayAccess {
 
                 $this->loaded[] = $parts[0];
             }
+        }
 
         return $this;
     }

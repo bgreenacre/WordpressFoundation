@@ -53,7 +53,7 @@ class ViewServiceProvider implements ServiceProviderInterface {
 
             // Get the captured output and close the buffer
             return ob_get_clean();
-        };
+        });
     }
 
     /**

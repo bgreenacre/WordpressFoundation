@@ -28,7 +28,7 @@ class ConfigServiceProvider implements ServiceProviderInterface {
         $app['config'] = function($app)
         {
             return new Config($app, $app['fileloader'], $app['plugin.slug']);
-        });
+        };
     }
 
     /**
