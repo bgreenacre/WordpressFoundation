@@ -7,6 +7,8 @@
  * @version $id$
  */
 
+use Pimple\Container;
+
 /**
  * Registers the Post Types service provider.
  *
@@ -14,7 +16,7 @@
  * @author Brian Greenacre <bgreenacre42@gmail.com>
  * @version $id$
  */
-class PostTypesServiceProvider extends AbstractServiceProvider {
+class PostTypesServiceProvider implements ServiceProviderInterface {
 
     /**
      * Register post types service provider functions
@@ -22,7 +24,7 @@ class PostTypesServiceProvider extends AbstractServiceProvider {
      * 
      * @return void
      */
-    public function register()
+    public function register(Container $app)
     {
     }
 
@@ -31,14 +33,14 @@ class PostTypesServiceProvider extends AbstractServiceProvider {
      * 
      * @return void
      */
-    public function boot()
+    public function boot(Container $app)
     {
         // Add an init callback to register post types.
-        add_action('init', function()
+        add_action('init', function() use ($app)
         {
             // Get the post types defined within the
             // post.php config file and types index.
-            $postTypes = $this->app['config']
+            $postTypes = $app['config']
                 ->load('post.types')
                 ->asArray();
 

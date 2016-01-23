@@ -8,6 +8,7 @@
  */
 
 use Exception;
+use Closure;
 
 /**
  * Loads file contents.
@@ -24,7 +25,7 @@ class FileLoader {
      * @access protected
      * @var array
      */
-    protected $paths = array();
+    protected $paths = [];
 
     /**
      * Construct object.
@@ -59,8 +60,11 @@ class FileLoader {
         {
             try
             {
+                $path = str_replace(['\\', '/'], DIRECTORY_SEPARATOR, $paths[$i]);
+                $path = rtrim($path, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
+
                 // Try to load the file with path.
-                return $this->load(rtrim($paths[$i], '/') . DIRECTORY_SEPARATOR . $file, $extension);
+                return $this->load($path . $file, $extension);
             }
             catch (Exception $e)
             {
@@ -89,7 +93,7 @@ class FileLoader {
         // file extension or make a call if it is a Closure.
         if ($extension instanceof Closure)
         {
-            return $extension($file, $c);
+            return $extension($file);
         }
         else
         {
@@ -145,7 +149,7 @@ class FileLoader {
         }
         elseif (is_string($paths))
         {
-            return $this->load(rtrim($paths, '/') . DIRECTORY_SEPARATOR . $file, 'php');
+            return $this->load($paths . $file, 'php');
         }
 
         return null;
@@ -160,7 +164,13 @@ class FileLoader {
      */
     public function setPaths(array $paths)
     {
-        $this->paths = $paths;
+        $this->paths = array_map(function ($path)
+        {
+            $path = str_replace(['\\', '/'], DIRECTORY_SEPARATOR, $path);
+            $path = rtrim($path, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
+
+            return $path;
+        }, $paths);
 
         return $this;
     }
@@ -176,7 +186,9 @@ class FileLoader {
     {
         if ($which !== null)
         {
-            return array_get($this->paths, $which);
+            return (array_key_exists($which, $this->paths))
+                ? $this->paths[$which]
+                : null;
         }
 
         return $this->paths;
@@ -193,12 +205,12 @@ class FileLoader {
     {
         if ( ! array_key_exists($context, $this->paths))
         {
-            $this->paths[$context] = array();
+            $this->paths[$context] = [];
         }
 
         if ( ! is_array($this->paths[$context]))
         {
-            $this->paths[$context] = array($this->paths[$context]);
+            $this->paths[$context] = [$this->paths[$context]];
         }
 
         array_unshift($this->paths[$context], $path);
@@ -219,7 +231,10 @@ class FileLoader {
         {
             $keyOfPath = array_search($path, $this->paths[$context]);
 
-            array_forget($this->paths, $context . '.' . $keyOfPath);
+            if (isset($this->paths[$context][$keyOfPath]))
+            {
+                unset($this->paths[$context][$keyOfPath]);
+            }
         }
 
         return $this;

@@ -7,6 +7,7 @@
  * @version $id$
  */
 
+use Pimple\Container;
 use ArrayAccess;
 use DirectoryIterator;
 
@@ -28,7 +29,7 @@ class Config implements ArrayAccess {
      * @access protected
      * @var array
      */
-    protected $data = array();
+    protected $data = [];
 
     /**
      * Contains wordpress option values in the
@@ -37,7 +38,7 @@ class Config implements ArrayAccess {
      * @access protected
      * @var array
      */
-    protected $options = array();
+    protected $options = [];
 
     /**
      * Set the name space for all options
@@ -58,13 +59,20 @@ class Config implements ArrayAccess {
     protected $loader;
 
     /**
+     * The application container. Typically for the plugin.
+     *
+     * @var Pimple/Container
+     */
+    protected $app;
+
+    /**
      * Tracks which top-level config/option values have been
      * loaded.
      *
      * @access protected
      * @var array
      */
-    protected $loaded = array();
+    protected $loaded = [];
 
     /**
      * The file extension the config files are using.
@@ -93,8 +101,9 @@ class Config implements ArrayAccess {
      * @param string $namespace Option namespace.
      * @return void
      */
-    public function __construct(FileLoader $loader, $namespace = null)
+    public function __construct(Container $app, FileLoader $loader, $namespace = null)
     {
+        $this->setContainer($app);
         $this->setFileLoader($loader);
 
         if ($namespace !== null)
@@ -141,46 +150,56 @@ class Config implements ArrayAccess {
         // Get the path parts.
         $parts = $this->getPathParts($key);
 
-        // If there's a config file path set then
-        // let's try and load values from it.
-        if (($filePath = $this->getFileLoader()->getPaths('config')) && ! $this->loaded($parts[0]))
+        // Get config file paths.
+        $filePaths = (array) $this->getFileLoader()->getPaths('config');
+
+        $configTempArr = [];
+
+        foreach ($filePaths as $filePath)
         {
-            $filePath  = rtrim($filePath, '/') . DIRECTORY_SEPARATOR;
-            $pathParts = $parts;
-            $path      = '';
-
-            // Loop through the parts until a file is found
-            while ($part = array_shift($pathParts))
+            // If there's a config file path set then
+            // let's try and load values from it.
+            if ( ! empty($filePath) && ! $this->loaded($parts[0]))
             {
-                $part = rtrim($part, '/') . DIRECTORY_SEPARATOR;
+                $pathParts = $parts;
+                $path      = '';
 
-                if (is_file($filePath . $path . $part . '.' . $this->extension))
+                // Loop through the parts until a file is found
+                while ($part = array_shift($pathParts))
                 {
-                    // Replace directory characters with the
-                    // delimiter character for proper setting
-                    // of the data array in this object.
-                    $pathKey = str_replace(array('/', '\\'), '.', $path);
+                    if (is_file($filePath . $path . $part . '.' . $this->extension))
+                    {
+                        // Replace directory characters with the
+                        // delimiter character for proper setting
+                        // of the data array in this object.
+                        $pathKey = str_replace(['/', '\\'], '.', $path);
 
-                    // Append the last part
-                    $pathKey .= $part;
+                        // Append the last part
+                        $pathKey .= $part;
 
-                    // Finally, set the value to the complete
-                    // array index path.
-                    $this[$pathKey] = $this->loadFile(
-                        $filePath . $path . $part,
-                        $this->extension
-                    );
-                }
-                elseif (is_dir($filePath . $path . $part))
-                {
-                    // If this is a directory then append
-                    // the dirname to the path variable
-                    // which will be used in the next
-                    // iteration to file a config file
-                    $path .= $part . DIRECTORY_SEPARATOR;
+                        $configTempArr = array_extend_distinct(
+                            $configTempArr,
+                            (array) $this->loadFile(
+                                $filePath . $path . $part,
+                                $this->extension
+                            )
+                        );
+                    }
+                    elseif (is_dir($filePath . $path . $part))
+                    {
+                        // If this is a directory then append
+                        // the dirname to the path variable
+                        // which will be used in the next
+                        // iteration to find a config file
+                        $path .= $part . DIRECTORY_SEPARATOR;
+                    }
                 }
             }
         }
+
+        // Finally, set the value to the complete
+        // array index path.
+        $this[$pathKey] = $configTempArr;
 
         // Let's lookup an option value that might be saved
         // to the top-level path parts.
@@ -194,8 +213,6 @@ class Config implements ArrayAccess {
 
             // Track the loaded values.
             $this->loaded[] = $this->getNamespace() . $parts[0];
-
-            return $this;
         }
         elseif ( ! $this->getNamespace())
         {
@@ -207,13 +224,9 @@ class Config implements ArrayAccess {
 
                 $this->loaded[] = $parts[0];
             }
+        }
 
-            return $this;
-        }
-        else
-        {
-            return $this;
-        }
+        return $this;
     }
 
     /**
@@ -226,15 +239,16 @@ class Config implements ArrayAccess {
      */
     public function loaded($key)
     {
+        $fullPartName = '';
         $parts = $this->getPathParts($key);
 
-        return (
-            isset($parts[0]) &&
-            in_array(
-                $this->getNamespace() . $parts[0],
-                $this->loaded
-            )
-        );
+        if (isset($parts[0]))
+        {
+            $fullPartName = $this->getNamespace() . $parts[0];
+        }
+
+        return ( ! empty($fullPartName) && in_array($fullPartName, $this->loaded))
+            ? true : false;
     }
 
     /**
@@ -247,64 +261,67 @@ class Config implements ArrayAccess {
     public function loadNamespace($path = '')
     {
         $namespace = rtrim($this->getNamespace(), '.');
-        $filePath  = rtrim($this->getFileLoader()->getPaths('config'), '/') . DIRECTORY_SEPARATOR;
+        $filePaths = (array) $this->getFileLoader()->getPaths('config');
 
-        if ( ! $path && is_file($filePath . $namespace . '.' . $this->extension))
+        foreach ($filePaths as $filePath)
         {
-            // Set data array with the namespace config file name
-            $this->data = $this->loadFile(
-                $filePath . $namespace . $path,
-                $this->extension
-            );
-        }
-        elseif (is_dir($filePath . $namespace . $path))
-        {
-            // Iterate files in the namespace folder.
-            $dir = new DirectoryIterator($filePath . $namespace . $path);
-
-            foreach ($dir as $file)
+            if ( ! $path && is_file($filePath . $namespace . '.' . $this->extension))
             {
-                $filename = $file->getFilename();
+                // Set data array with the namespace config file name
+                $this->data = $this->loadFile(
+                    $filePath . $namespace . $path,
+                    $this->extension
+                );
+            }
+            elseif (is_dir($filePath . $namespace . $path))
+            {
+                // Iterate files in the namespace folder.
+                $dir = new DirectoryIterator($filePath . $namespace . $path);
 
-                if ($filename[0] === '.' || $filename[strlen($filename)-1] === '~')
+                foreach ($dir as $file)
                 {
-                    // Skip all hidden files and UNIX backup files
-                    continue;
-                }
-                elseif ($file->isDir())
-                {
-                    // Move into the directory and load all files.
-                    if ( ! $path)
+                    $filename = $file->getFilename();
+
+                    if ($filename[0] === '.' || $filename[strlen($filename)-1] === '~')
                     {
-                        $path .= DIRECTORY_SEPARATOR;
+                        // Skip all hidden files and UNIX backup files
+                        continue;
                     }
-
-                    $this->loadNamespace($path . $filename . DIRECTORY_SEPARATOR);
-                }
-                elseif ($file->getExtension() === $this->extension)
-                {
-                    // Found a config file so load it's contents
-                    $data = $this->loadFile(
-                        $filePath . $namespace . $path . $filename,
-                        $this->extension
-                    );
-
-                    $pathKey = $this->getNamespace();
-
-                    if ($path)
+                    elseif ($file->isDir())
                     {
-                        // If there is a relative path then set the specific
-                        // index path based on the relative path.
-                        $pathKey .= str_replace(
-                            DIRECTORY_SEPARATOR,
-                            '.',
-                            DIRECTORY_SEPARATOR . trim($path, DIRECTORY_SEPARATOR)
+                        // Move into the directory and load all files.
+                        if ( ! $path)
+                        {
+                            $path .= DIRECTORY_SEPARATOR;
+                        }
+
+                        $this->loadNamespace($path . $filename . DIRECTORY_SEPARATOR);
+                    }
+                    elseif ($file->getExtension() === $this->extension)
+                    {
+                        // Found a config file so load it's contents
+                        $data = $this->loadFile(
+                            $filePath . $namespace . $path . $filename,
+                            $this->extension
                         );
 
-                        rtrim($pathKey, '.');
-                    }
+                        $pathKey = $this->getNamespace();
 
-                    $this[$pathKey] = $data;
+                        if ($path)
+                        {
+                            // If there is a relative path then set the specific
+                            // index path based on the relative path.
+                            $pathKey .= str_replace(
+                                DIRECTORY_SEPARATOR,
+                                '.',
+                                DIRECTORY_SEPARATOR . trim($path, DIRECTORY_SEPARATOR)
+                            );
+
+                            rtrim($pathKey, '.');
+                        }
+
+                        $this[$pathKey] = $data;
+                    }
                 }
             }
         }
@@ -322,7 +339,7 @@ class Config implements ArrayAccess {
      */
     private function loadFile($file, $extension)
     {
-        return $this->loader->load($file, $extension);
+        return (array) $this->getFileLoader()->load($file, $extension);
     }
 
     /**
@@ -435,6 +452,29 @@ class Config implements ArrayAccess {
     }
 
     /**
+     * Set the application container object.
+     * 
+     * @param  Container $app
+     * @return $this
+     */
+    public function setContainer(Container $app)
+    {
+        $this->app = $app;
+
+        return $this;
+    }
+
+    /**
+     * Get the container object.
+     *
+     * @return Container
+     */
+    public function getContainer()
+    {
+        return $this->app;
+    }
+
+    /**
      * Return the entire data or a key.
      *
      * @access public
@@ -495,7 +535,8 @@ class Config implements ArrayAccess {
      */
     public function offsetUnset($key)
     {
-        array_forget($this->data, $key);
+        array_remove($this->options, $key);
+        array_remove($this->data, $key);
     }
 
     /**
@@ -507,13 +548,8 @@ class Config implements ArrayAccess {
      */
     public function offsetExists($key)
     {
-        $exists = array_get(
-            $this->data,
-            $key,
-            array_get($this->options, $key, false)
-        );
-
-        return ($exists !== false) ? true : false;
+        return (array_has($this->options, $key) || array_has($this->data, $key))
+            ? true : false;
     }
 
 }
