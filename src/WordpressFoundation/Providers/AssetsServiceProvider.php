@@ -44,6 +44,8 @@ class AssetsServiceProvider implements ServiceProviderInterface {
                 // based on the uri path.
                 if (is_string($asset))
                 {
+                    $context = null;
+
                     // Find the context within the URI.
                     foreach (['admin', 'login', 'front'] as $inUri)
                     {
